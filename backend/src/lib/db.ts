@@ -71,6 +71,31 @@ function insert<T extends Record<string, string | number | null>>(
   return rowIds;
 }
 
+/**
+ * Update one row in a table.
+ * @param table The updated table
+ * @param changes The changed attributes. `null` sets the value to NULL, `undefined` does not update the attribute.
+ * @param id The id of the row to update.
+ * @returns The number of rows updated. Should *never* be greater than 1.
+ */
+function update(
+  table: Tables,
+  changes: Record<string, string | number | undefined | null>,
+  id: string,
+) {
+  const updated = Object.entries(changes).filter(
+    ([_k, v]) => v !== undefined,
+  ) as [string, string | number | null][];
+
+  const query = `UPDATE ${table} SET ${updated.map(([k]) => `${k} = ?`).join(',')} WHERE id = ?`;
+
+  const result = db.run(query, [...updated.map(([k, v]) => v), id]);
+
+  return result.changes;
+}
+
+update('User', { username: 'encule' }, 'caca');
+
 //#region CREATE
 
 export function createUser(username: string, password: string) {
@@ -162,6 +187,34 @@ const queryGetFlashcards = db
   .as(FlashCard);
 export function getFlashCards(list: string) {
   return queryGetFlashcards.all(list);
+}
+//#endregion
+
+//#region Update
+
+// Doesn't allow to update the type of a container as it would cause too much complexity in the update.
+// It is not a useful feature anyway, as a list/directory appear as two distinct entities to the user,
+// so there should be no reason for them to ever need to modify the type.
+
+export function editContainer(
+  id: string,
+  changes: {
+    parent_id?: string | null;
+    name?: string;
+  },
+) {
+  update('Container', changes, id);
+}
+
+// Media edit shall be implemented later.
+export function editFlashCard(
+  id: string,
+  changes: {
+    question_text?: string;
+    answer_text?: string;
+  },
+) {
+  update('FlashCard', changes, id);
 }
 
 //#endregion

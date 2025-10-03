@@ -5,7 +5,7 @@ export default class Container extends Base {
   name!: string;
   owner!: string;
   type!: 'directory' | 'list';
-  parent_id?: string;
+  parent_id: string | null = null;
 
   getOwner(): User {
     throw Error('Not implemented');
