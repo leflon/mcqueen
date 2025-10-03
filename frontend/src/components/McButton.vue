@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed } from 'vue'
 
@@ -72,5 +72,5 @@ const textContent = computed(() => {
 </script>
 
 <template>
-  <button :style='variantStyle.style' :class='variantStyle.class'> {{ textContent }} </button>
+  <h1>hello</h1>
 </template>

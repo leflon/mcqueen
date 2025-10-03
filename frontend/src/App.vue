@@ -1,9 +1,9 @@
 <script setup lang="ts">
 
-import McButton from './components/McButton.vue'
+import McButton from "./components/McButton.vue"
 import McCard from './components/McCard.vue'
 import McMenu from './components/McMenu.vue'
-import McSearchBar from './components/McSearchBar.vue'
+import McSearchBar from "./components/McSearchBar.vue"
 
 </script>
 
