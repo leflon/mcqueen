@@ -1,15 +1,11 @@
-# backend
+# Elysia with Bun runtime
 
-To install dependencies:
+## Development
 
-```bash
-bun install
-```
-
-To run:
+To start the development server run:
 
 ```bash
-bun run index.ts
+bun run dev
 ```
 
-This project was created using `bun init` in bun v1.2.21. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Open http://localhost:3000/ with your browser to see the result.

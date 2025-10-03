@@ -13,14 +13,14 @@ console.log('== Creating: User == ');
 db.run(
   `CREATE TABLE IF NOT EXISTS User(
     id TEXT PRIMARY KEY,
-    username TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     created_at INTEGER NOT NULL,
     deleted_at INTEGER
   )`,
 );
 
-console.log('== Creating: User == ');
+console.log('== Creating: Container == ');
 db.run(
   `CREATE TABLE IF NOT EXISTS Container(
     id TEXT PRIMARY KEY,
@@ -59,6 +59,8 @@ db.run(
     answer_text TEXT,
     answer_media_id TEXT,
     list_id TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    deleted_at INTEGER,
     FOREIGN KEY (list_id) REFERENCES Container(id),
     FOREIGN KEY (question_media_id) REFERENCES Media(id),
     FOREIGN KEY (answer_media_id) REFERENCES Media(id),
