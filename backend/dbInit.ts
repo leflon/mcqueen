@@ -15,8 +15,7 @@ db.run(
     id TEXT PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    created_at INTEGER NOT NULL,
-    deleted_at INTEGER
+    created_at INTEGER NOT NULL
   )`,
 );
 
@@ -30,10 +29,9 @@ db.run(
     -- A List is a collection of flashcards.
     type TEXT NOT NULL CHECK(type IN ('directory', 'list')),
     created_at INTEGER NOT NULL,
-    deleted_at INTEGER, -- Null until user deletes account.
     parent_id TEXT,
-    FOREIGN KEY (owner) REFERENCES User(id),
-    FOREIGN KEY (parent_id) REFERENCES Container(id)
+    FOREIGN KEY (owner) REFERENCES User(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES Container(id) ON DELETE CASCADE
   )`,
 );
 
@@ -45,8 +43,7 @@ db.run(
     owner TEXT, -- prevent other user from seeing it.
     type TEXT NOT NULL CHECK(type IN ('image', 'video', 'audio')),
     created_at INTEGER NOT NULL,
-    deleted_at INTEGER,
-    FOREIGN KEY (owner) REFERENCES User(id)
+    FOREIGN KEY (owner) REFERENCES User(id) ON DELETE CASCADE
   )`,
 );
 
@@ -60,8 +57,7 @@ db.run(
     answer_media_id TEXT,
     list_id TEXT NOT NULL,
     created_at INTEGER NOT NULL,
-    deleted_at INTEGER,
-    FOREIGN KEY (list_id) REFERENCES Container(id),
+    FOREIGN KEY (list_id) REFERENCES Container(id) ON DELETE CASCADE,
     FOREIGN KEY (question_media_id) REFERENCES Media(id),
     FOREIGN KEY (answer_media_id) REFERENCES Media(id),
 
