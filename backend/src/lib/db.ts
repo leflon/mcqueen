@@ -1,6 +1,9 @@
 import Database from 'bun:sqlite';
+import Container from '../models/Container';
+import User from '../models/User';
+import type { NewFlashCard } from '../types/NewFlashCard';
+import type { UserContent } from '../types/UserContent';
 import FlashCard from '../models/FlashCard';
-import Base from '../models/base';
 
 console.log(process.cwd());
 const db = new Database('data/mcqueen.sqlite', { create: true });
@@ -97,16 +100,69 @@ export function createFlashCardList(
   return listId;
 }
 
-type NewFlashCard = Omit<
-  Pick<FlashCard, Exclude<keyof FlashCard, keyof Base>>,
-  'list_id'
->;
 export function createFlashCards(cards: Array<NewFlashCard>, list: string) {
   insert('FlashCard', cards, { list_id: list });
 }
 
 //#endregion
 //#region READ
+
+const queryGetUserById = db.query('SELECT * FROM User WHERE id = ?').as(User);
+const queryGetUserByUsername = db
+  .query('SELECT * FROM User WHERE username = ?')
+  .as(User);
+export function getUser({ username, id }: { username?: string; id?: string }) {
+  if (!username && !id)
+    throw Error("'username' or 'id' expected. Got nothing.");
+  if (username && id) throw Error("'username' OR 'id' expected. Got both.");
+  if (id) return queryGetUserById.get(id);
+  if (username) return queryGetUserByUsername.get(username);
+  return null;
+}
+
+const queryGetAllContainers = db
+  .query('SELECT * FROM Container WHERE owner = ?')
+  .as(Container);
+export function getUserContent(userId: string): any | UserContent {
+  const containers = queryGetAllContainers.iterate(userId);
+
+  // Flat store of all containers for O(1) look up.
+  const allNodes: Map<string, UserContent> = new Map();
+  // Returned tree structure.
+  const root: UserContent = { id: 'root', lists: [], directories: [] };
+  allNodes.set('root', root);
+
+  const getOrCreateDir = (id: string): UserContent => {
+    if (!allNodes.has(id)) {
+      allNodes.set(id, { id, lists: [], directories: [] });
+    }
+    return allNodes.get(id)!;
+  };
+
+  for (const container of containers) {
+    const parentId = container.parent_id || 'root';
+    const parentNode = getOrCreateDir(parentId);
+
+    if (container.type === 'list') {
+      parentNode.lists.push(container);
+    } else if (container.type === 'directory') {
+      const dirNode = getOrCreateDir(container.id);
+      // Only add to parent's directories if it's not already there
+      if (!parentNode.directories.some((d) => d.id === container.id)) {
+        parentNode.directories.push(dirNode);
+      }
+    }
+  }
+
+  return root;
+}
+
+const queryGetFlashcards = db
+  .query('SELECT * FROM FlashCard WHERE list_id = ?')
+  .as(FlashCard);
+export function getFlashCards(list: string) {
+  return queryGetFlashcards.all(list);
+}
 
 //#endregion
 
