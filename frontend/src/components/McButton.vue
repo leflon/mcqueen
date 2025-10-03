@@ -17,14 +17,20 @@ const color3=ref('#ED4E4A')
 const color4=ref('#862922')
 const color5=ref('#ADE1EE')
 
-const props=defineProps({ 
-  variant: {
-    type: String,
-    default: 'nextQuestion'
-  }
-})
+type Variant = 'nextQuestion' | 'edit' | 'practice' | 'create' | 'seeAnswer' | 'addMore'
 
-const variantStyle=computed(() => {
+interface VariantStyle {
+  class: Record<string, string>
+  style: Record<string, string | number>
+  size: Record<string, string | number>
+}
+
+
+const props=defineProps<{ 
+  variant: Variant
+}>()
+
+const variantStyle=computed<VariantStyle>(() => {
   switch (props.variant) {
     case 'nextQuestion': return {
       class: { },
@@ -48,18 +54,18 @@ const variantStyle=computed(() => {
     }
     case 'seeAnswer' : return {
       class: { },
-      style: { backgroundColor: color1.value, color:'black',borderRadius: 10 },
+      style: { backgroundColor: color1.value, color:'black', borderRadius: 10 },
       size: {}
     }
     case 'addMore' : return {
       class: {},
-      style: { backgroundColor: color2.value, color:'white' ,borderRadius:10 },
+      style: { backgroundColor: color4.value, color:'white', borderRadius:10 },
       size: {}
     }
   }
 })
 
-const textContent = computed(() => {
+const textContent = computed<string>(() => {
   switch (props.variant) {
     case 'nextQuestion': return 'next question'
     case 'edit': return 'edit'
@@ -68,9 +74,10 @@ const textContent = computed(() => {
     case 'seeAnswer' : return 'see answer'
     case 'addMore' : return 'add more' 
   }
+  return 'Typescript Fallback'
 })
 </script>
 
 <template>
-  
+  <button :style='variantStyle.style' :class='variantStyle.class'> <slot> {{ textContent }} </slot> </button>
 </template>
