@@ -57,6 +57,11 @@ onMounted(() => {
         color: white;
         text-align: center;
     }
+
+    h2{
+        font-size: large;
+    }
+
     .Home-subtitle{
         color:white;
 
