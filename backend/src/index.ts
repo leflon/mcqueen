@@ -1,24 +1,18 @@
-import { Elysia } from 'elysia';
+import jwt from '@elysiajs/jwt';
+import { Elysia, t } from 'elysia';
+import { auth } from './routes/auth';
 
 if (typeof Bun === 'undefined') {
   throw new Error('Please run this project with Bun. (https://bun.sh)');
 }
-
-const users = new Elysia({ prefix: '/users' })
-  .get('/me', () => 'ok')
-  .guard({
-    beforeHandle: ({ status }) => {
-      if (Math.random() > 0.5) return status(401);
-    },
-  })
-  .get('/you', () => 'you');
-
-const app = new Elysia()
-  .get('/', () => 'Hello Elysia')
-  .use(test)
-  .use(users)
+const app = new Elysia({
+  prefix: '/api',
+  cookie: {
+    secrets: process.env.COOKIE_SECRET,
+    maxAge: 90 * 24 * 60 * 60,
+    secure: true,
+    sameSite: 'none'
+  }
+})
+  .use(auth)
   .listen(3000);
-
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
-);
