@@ -1,8 +1,11 @@
 <script setup lang="ts">
-
+import { RouterLink } from 'vue-router';
 
 </script>
 
 <template>
-    <h1>Mc_menu</h1>
+    <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/flashcards">Cards</RouterLink>
+    </nav>
 </template>
