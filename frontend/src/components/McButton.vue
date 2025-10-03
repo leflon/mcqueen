@@ -48,20 +48,12 @@ const variantStyle=computed(() => {
     }
     case 'seeAnswer' : return {
       class: { },
-<<<<<<< HEAD
       style: { backgroundColor: color1.value, color:'black',borderRadius: 10 },
-=======
-      style: { backgroundColor: color1.value, color:'black', borderRadius: 10 },
->>>>>>> 46c1988 (McButton un peu meilleur)
       size: {}
     }
     case 'addMore' : return {
       class: {},
-<<<<<<< HEAD
       style: { backgroundColor: color2.value, color:'white' ,borderRadius:10 },
-=======
-      style: { backgroundColor: color4.value, color:'white', borderRadius:10 },
->>>>>>> 46c1988 (McButton un peu meilleur)
       size: {}
     }
   }
@@ -80,9 +72,5 @@ const textContent = computed(() => {
 </script>
 
 <template>
-<<<<<<< HEAD
-  <h1>hello</h1>
-=======
-  <button :style='variantStyle.style' :class='variantStyle.class'> <slot> {{ textContent }} </slot> </button>
->>>>>>> 46c1988 (McButton un peu meilleur)
+  
 </template>
