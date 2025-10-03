@@ -1,6 +1,15 @@
 *{
   margin:0;
   box-sizing: border-box;
-  
+}
 
+h1, h2{
+        font-family: "Outfit";
+        font-size: 64px;
+        font-weight:2000;
+}
+
+p, button{
+    font-family: "Inter"; 
+ 
 }
