@@ -1,22 +1,10 @@
 import jwt from '@elysiajs/jwt';
 import { Elysia, t } from 'elysia';
+import { COOKIE_CONFIG, JWT_CONFIG } from '../lib/config';
 import { createUser, getUser } from '../lib/helpers';
 
-const COOKIE_SETTINGS = {
-  httpOnly: true,
-  maxAge: 90 * 24 * 60 * 60,
-  path: '/',
-  sameSite: 'none' as 'none'
-};
-
 export const auth = new Elysia({ prefix: '/auth' })
-  .use(
-    jwt({
-      name: 'jwt',
-      secret: process.env.JWT_SECRET!,
-      exp: '90d'
-    })
-  )
+  .use(jwt(JWT_CONFIG))
   .post(
     '/register',
     async ({ body, jwt, cookie, set }) => {
@@ -28,10 +16,7 @@ export const auth = new Elysia({ prefix: '/auth' })
       }
       const userId = createUser(username, password);
       const token = await jwt.sign({ id: userId, username });
-      cookie.auth.set({
-        ...COOKIE_SETTINGS,
-        value: token
-      });
+      cookie.auth.set({ value: token });
       return { id: userId, username, token };
     },
     {
@@ -64,7 +49,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 
       // Already logged in with this account
       if (parsed.id === user.id) {
-        return { username: user.username, id: user.id };
+        return clientUser;
       }
 
       // Password check
@@ -74,13 +59,12 @@ export const auth = new Elysia({ prefix: '/auth' })
         return { error: 'Incorrect username or password.', ok: false };
       }
 
-      // Log in successfull, sending cookie
-      const token = await jwt.sign({ id: user.id, username: user.username });
+      // Log in successful, sending cookie
+      const token = await jwt.sign(clientUser);
       cookie.auth.set({
-        ...COOKIE_SETTINGS,
         value: token
       });
-      return { id: user.id, username: user.username };
+      return clientUser;
     },
     {
       body: t.Object({

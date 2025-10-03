@@ -22,7 +22,7 @@ type Tables = 'User' | 'Container' | 'Media' | 'FlashCard';
 function insert<T extends Record<string, string | number | null>>(
   table: Tables,
   values: T[] | T,
-  sharedValues: Record<string, string | number> = {},
+  sharedValues: Record<string, string | number> = {}
 ): string[] {
   if (!(values instanceof Array)) {
     values = [values];
@@ -53,7 +53,7 @@ function insert<T extends Record<string, string | number | null>>(
       rowIds[i],
       createdAt,
       ...Object.values(sharedValues), // Equal values for each record
-      ...Object.values(v), // Values proper to eached record
+      ...Object.values(v) // Values proper to eached record
     ])
     .flat();
 
@@ -77,10 +77,10 @@ function insert<T extends Record<string, string | number | null>>(
 function update(
   table: Tables,
   changes: Record<string, string | number | undefined | null>,
-  id: string,
+  id: string
 ) {
   const updated = Object.entries(changes).filter(
-    ([_k, v]) => v !== undefined,
+    ([_k, v]) => v !== undefined
   ) as [string, string | number | null][];
 
   const query = `UPDATE ${table} SET ${updated.map(([k]) => `${k} = ?`).join(',')} WHERE id = ?`;
@@ -109,13 +109,13 @@ export function createDirectory(name: string, owner: string) {
 export function createFlashCardList(
   name: string,
   owner: string,
-  directory?: string,
+  directory?: string
 ) {
   const [listId] = insert('Container', {
     name,
     owner,
     type: 'list',
-    parent_id: directory || null,
+    parent_id: directory || null
   });
 
   return listId;
@@ -178,6 +178,16 @@ export function getUserContent(userId: string): any | UserContent {
   return root;
 }
 
+const queryGetOwner = db.query('SELECT owner FROM Container WHERE id = ?');
+export function checkFlashCardsOwnership(
+  list: string,
+  userId: string
+): boolean | null {
+  const result = queryGetOwner.get(list) as { owner: string };
+  if (!result) return false;
+  return result.owner === userId;
+}
+
 const queryGetFlashcards = db
   .query('SELECT * FROM FlashCard WHERE list_id = ?')
   .as(FlashCard);
@@ -197,7 +207,7 @@ export function editContainer(
   changes: {
     parent_id?: string | null;
     name?: string;
-  },
+  }
 ) {
   update('Container', changes, id);
 }
@@ -208,7 +218,7 @@ export function editFlashCard(
   changes: {
     question_text?: string;
     answer_text?: string;
-  },
+  }
 ) {
   update('FlashCard', changes, id);
 }
