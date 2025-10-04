@@ -9,9 +9,12 @@ h1, h2,h3,h4{
         font-weight:2000;
 }
 
-p, button{
+p, button, input, label, a{
     font-family: "Inter"; 
- 
+}
+
+input{
+    outline: none;
 }
 
 body{
