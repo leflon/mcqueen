@@ -191,8 +191,15 @@ export function checkFlashCardsOwnership(
 const queryGetFlashcards = db
   .query('SELECT * FROM FlashCard WHERE list_id = ?')
   .as(FlashCard);
-export function getFlashCards(list: string) {
-  return queryGetFlashcards.all(list);
+const queryGetFlashcardById = db
+  .query('SELECT * FROM FlashCard WHERE id = ?')
+  .as(FlashCard);
+export function getFlashCards(listOrId: string) {
+  // Try to get by ID first (for single flashcard lookup)
+  const single = queryGetFlashcardById.all(listOrId);
+  if (single.length > 0) return single;
+  // Otherwise get by list_id
+  return queryGetFlashcards.all(listOrId);
 }
 //#endregion
 
@@ -235,7 +242,7 @@ export function deleteContainer(id: string) {
 
 const queryDeleteFlashcard = db.query('DELETE FROM FlashCard WHERE id = ?');
 export function deleteFlashCard(id: string) {
-  queryDeleteContainer.run(id);
+  queryDeleteFlashcard.run(id);
 }
 
 //#endregion
