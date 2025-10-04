@@ -1,16 +1,15 @@
 <script setup lang="ts">
 
-import McButton from './components/McButton.vue'
-import McCard from './components/McCard.vue'
-import McMenu from './components/McMenu.vue'
-import McSearchBar from './components/McSearchBar.vue'
+import { RouterView } from 'vue-router';
+import McMenu from './components/McMenu.vue';
+
+
 
 </script>
 
 <template>
-  <h2>Bon matin cher Monsieur 森内俊之</h2>
-  <McButton />
-  
+  <McMenu></McMenu>
+  <RouterView></RouterView>
 </template>
 
 <style scoped>
