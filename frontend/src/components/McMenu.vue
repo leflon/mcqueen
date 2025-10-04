@@ -9,6 +9,7 @@
         <div class="Menu-buttons">
             <RouterLink to="/flashcards">Your Cards</RouterLink>
             <RouterLink to="/edit_mode">Edit mode</RouterLink>
+            <RouterLink to="/practice">Practice</RouterLink>
             <RouterLink to="#">Log in</RouterLink>
             <RouterLink to="#">Sign up</RouterLink>
         </div>
@@ -34,6 +35,7 @@ import { RouterLink } from 'vue-router';
     }
 
     .Menu-Logo{
+        width: 40%;
         display: flex;
         align-items: center;
         gap :20px;
@@ -60,7 +62,7 @@ import { RouterLink } from 'vue-router';
     }
 
     .Menu-buttons{
-        width: 50%;
+        width: 60%;
         display: flex;
         justify-content:right;
     }

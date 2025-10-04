@@ -25,7 +25,11 @@
         <div class="Edit-Mode-section" :class="{ display: hide_sidebar, hidden: !hide_sidebar}">
             <h1>Edit mode</h1>
             <input type="text" placeholder="Change flascard title...">
-            <button>Delete all</button>
+            <div class="Edit-Mode-Buttons">
+                <button>Delete all</button>
+                <button>Save</button>
+            </div>
+            
             <div class="Card-section">
                 <div class="Add-card-section">
                     <div >
@@ -212,8 +216,13 @@ function toggle_sidebar(){
         width: 300px;
     }
 
-    .Edit-Mode-section > button{
-        min-width: 300px;
+    .Edit-Mode-Buttons{
+        display: flex;
+        gap: 15px;
+    }
+
+    .Edit-Mode-Buttons button{
+        min-width: 200px;
         height: 40px;
         background-color: #e9b796;
         border-radius: 10px;

@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Home from "./views/Home.vue";
 import CheckFlashcards from "./views/Check_flashcards.vue";
-import Edit_mode from "./views/Edit_mode.vue";
+import Edit_mode from "./views/Creation_and_Edit_mode.vue";
+import Practice from "./views/Practice.vue";
+
 
 const routes = [
     {
@@ -19,6 +21,11 @@ const routes = [
         path: "/edit_mode",
         name: "Edit_mode",
         component: Edit_mode
+    },
+    {
+        path: "/practice",
+        name: "Practice",
+        component: Practice
     }
 
 ];
