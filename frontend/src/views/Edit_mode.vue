@@ -1,7 +1,7 @@
 <template>
     <div class="Edit-mode-page">
-        <div class="Side-bar" :class="{ 'sidebar-collapsed': hide_sidebar }">
-            <div class="Side-bar-content" :class="{ hidden: hide_sidebar }">
+        <div class="Side-bar" :class="{ display: hide_sidebar, hidden: !hide_sidebar}">
+            <div class="Side-bar-content" :class="{ display: hide_sidebar, hidden: !hide_sidebar }">
                 <h2>Your FlashCards</h2>
 
                 <ul>
@@ -22,7 +22,7 @@
                 </div>
             </button>
         </div>
-        <div class="Edit-Mode-section" :class="{ 'content-expanded': hide_sidebar }">
+        <div class="Edit-Mode-section" :class="{ display: hide_sidebar, hidden: !hide_sidebar}">
             <h1>Edit mode</h1>
             <input type="text" placeholder="Change flascard title...">
             <button>Delete all</button>
@@ -87,69 +87,66 @@ function toggle_sidebar(){
         width: 100%;
         min-height: 550px;
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
     }
 
     /* Sidebar styles */
-    .Side-bar{
+    .Side-bar.display{
         width: 20%;
         display: flex;
         border-radius: 10px;
         padding-top: 10px;
-        transition: width 0.4s ease, padding 0.4s ease;
+
     }
 
-    .Side-bar.sidebar-collapsed{
-        width: 40px; /* Just the toggle button width */
-        padding-top: 0;
-        padding-left: 0;
-        padding-right: 0;
-        border-radius: 0;
+    .Side-bar.hidden{
+        width: 2%;
+        display: flex;
     }
 
-    .Side-bar>button{
+    .Side-bar.display>button{
         width: 5%;
         background-color: #525252;
         border-radius: 0px 10px 10px 0;
         color: white;
         font-weight: bold;
-        transition: width 0.4s ease, border-radius 0.4s ease;
     }
 
-    .sidebar-collapsed .Side-bar>button{
-        width: 100%;
-        border-radius: 0px 5px 5px 0;
-    }
-
-    .Side-bar>button div{
+    .Side-bar.display>button div{
         display: flex;
         flex-direction: column;
         gap: 100px;
     }
 
-    .Side-bar-content {
+
+    .Side-bar.hidden>button {
+        
+        width: 100%;
+        color: black;
+        border-radius: 0px 10px 10px 0;
+    }
+
+    .Side-bar.hidden>button div{
+        display: flex;
+        flex-direction: column;
+        gap: 100px;
+    }
+
+    
+
+    .Side-bar-content.display{
         background-color: #ade1ee;
+
         width: 95%;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 50px;
         padding-top: 30px;
-        max-height: 600px;
-        opacity: 1;
-        overflow: hidden;
-        border-radius: 10px 0 0 10px;
-        transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+        transition: ease-in-out;
     }
-
     .Side-bar-content.hidden{
-        max-height: 0;
-        opacity: 0;
-        pointer-events: none;
-        padding-top: 0;
-        padding-bottom: 0;
-        width: 0;
-        overflow: hidden;
+        display: none;
     }
 
     .Side-bar-content ul{
@@ -187,17 +184,18 @@ function toggle_sidebar(){
     
 
     /* Main content section */
+
+    .Edit-Mode-section.hidden{
+        width: 98%;
+        
+    }
+
     .Edit-Mode-section{
         width: 80%;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 20px;
-        transition: width 0.4s ease;
-    }
-
-    .Edit-Mode-section.content-expanded{
-        width: calc(100% - 50px); /* Take full width minus toggle button space */
     }
 
     .Edit-Mode-section h1{
@@ -259,7 +257,7 @@ function toggle_sidebar(){
     .Add-card-section textarea, .Single-Card-section textarea{
         height: 60px;
         width: 100%;
-        max-width: 220px;
+        
         outline: none;
         resize: none; 
         border: none;
