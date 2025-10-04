@@ -3,9 +3,9 @@
   box-sizing: border-box;
 }
 
-h1, h2{
+h1, h2,h3,h4{
         font-family: "Outfit";
-        font-size: 64px;
+        
         font-weight:2000;
 }
 
@@ -16,4 +16,10 @@ p, button{
 
 body{
     background-color: #862922;
+}
+
+button{
+    cursor: pointer;
+    border: none;
+    
 }

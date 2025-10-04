@@ -6,7 +6,12 @@
             <img src="/images/cars-flash-mc-queen-verso.png" alt="Mcqueen">
             <h1>Flash Cards McQueen </h1>
         </RouterLink>
-        <RouterLink to="/flashcards">Cards</RouterLink>
+        <div class="Menu-buttons">
+            <RouterLink to="/flashcards">Your Cards</RouterLink>
+            <RouterLink to="#">Log in</RouterLink>
+            <RouterLink to="#">Sign up</RouterLink>
+        </div>
+        
     </div>
 </template>
 
@@ -24,7 +29,6 @@ import { RouterLink } from 'vue-router';
         padding-left: 20px;
         padding-right: 20px;
         height: 70px;
-        background: blue;
         
     }
 
@@ -51,6 +55,15 @@ import { RouterLink } from 'vue-router';
         margin: 0 10px;
         border-radius: 5px;
         transition: background-color 0.3s;
+        font-family: "Inter";
     }
+
+    .Menu-buttons{
+        width: 50%;
+        display: flex;
+        justify-content:right;
+    }
+
+
     
 </style>

@@ -58,6 +58,10 @@ onMounted(() => {
         text-align: center;
     }
 
+    h1{
+        font-size: 64px;
+    }
+
     h2{
         font-size: large;
     }
