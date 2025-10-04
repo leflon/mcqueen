@@ -1,11 +1,20 @@
-# Elysia with Bun runtime
+# mcqueen/backend
 
-## Development
+## Setup
 
-To start the development server run:
+- **Fill in env variables**
+- **Run `dbInit.ts`**: `bun run dbInit.ts`
 
-```bash
-bun run dev
-```
+## Routes
 
-Open http://localhost:3000/ with your browser to see the result.
+### Auth
+ - `POST /api/auth/register`: Registers a new user in database:
+
+ Body:
+ ```js
+	{
+		"username": String
+		"password": String
+	}
+ ```
+  - `POST /api/auth/login`

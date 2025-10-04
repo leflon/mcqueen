@@ -7,6 +7,7 @@
     "init-db": "bun run dbInit.ts"
   },
   "dependencies": {
+    "@elysiajs/jwt": "^1.4.0",
     "elysia": "latest"
   },
   "devDependencies": {
