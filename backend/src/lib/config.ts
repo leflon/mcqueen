@@ -2,6 +2,7 @@ export const COOKIE_CONFIG = {
   httpOnly: true,
   maxAge: 90 * 24 * 60 * 60,
   path: '/',
+  secure: true,
   sameSite: 'none' as 'none'
 };
 
