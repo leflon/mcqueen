@@ -23,6 +23,7 @@ jobs:
           port: ${{ secrets.BACKEND_SSH_PORT }}
           script: |
             export PATH="$HOME/.bun/bin:$PATH"
+            export PORT=${{ vars.BACKEND_PORT }}
             cd ${{ secrets.BACKEND_CWD }}
 
             # In case of fail, rollback to initial state.
@@ -36,7 +37,7 @@ jobs:
             bun install
 
             # Restart daemon
-            PORT=${PORT} bun run prod:restart || bun run prod:start
+            PORT=${PORT} bun run prod:restart || bun run prod:start>/dev/null
 
             # Health check
             sleep 5
@@ -47,7 +48,7 @@ jobs:
               echo "Health check failed, rolling back..."
               git checkout $PREVIOUS_COMMIT -- .
               bun install
-              bun run prod:restart
+              bun run prod:restart>/dev/null
               # Exit with error
               exit 1
             fi
