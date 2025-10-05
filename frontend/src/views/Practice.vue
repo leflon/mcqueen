@@ -3,10 +3,11 @@
     import McButton from '../components/McButton.vue'
 
     import { ref, onMounted } from 'vue'
-    import { useRoute } from 'vue-router'
+    import { useRoute, useRouter } from 'vue-router'
     import { api } from '../lib/api'
 
     const route = useRoute()
+    const router = useRouter()
     const id = route.params.id
 
     const secondsOnCard= ref(0) //Time
@@ -19,9 +20,13 @@
     }
 
     function rectoVerso() : void {
-    isRecto.value=false
+        isRecto.value= !isRecto.value 
     }
 
+    function secondsToMMSS(seconds: number) : string {
+    
+    return `${Math.floor(seconds/60)}:${ seconds%60 < 10 ? '0'+seconds%60 : seconds%60}`
+    }
 
     function resetAction() : void {
     secondsOnCard.value=0
@@ -65,11 +70,15 @@
 }
 
 
-
+    function exit() : void {
+        router.push('/flashcards')
+    }
     
     
     onMounted(()=>{
         loadDeckFromBackend()
+
+
         get_list_info()
     })
 </script>
@@ -84,16 +93,17 @@
             <h2>{{ list_title }}</h2>
             <div class="Title-buttons">
                 <button @click="resetAction">Reset</button>
-                <button>Exit</button>
+                <button @click='exit'>Exit</button>
+                
             </div>
         </div>
 
         <div class="Stats-section">
             <div class="Stats-item">
-                <p>Time : {{ secondsOnCard }}</p>
+                <p>{{ secondsToMMSS(secondsOnCard) }}</p>
             </div>
             <div class="Stats-item">
-                <p>Questions : {{ questionNumber }}</p>
+                <p>Question : {{ questionNumber }}</p>
             </div>
         </div>
         
@@ -110,12 +120,15 @@
       
         <div class="Control-buttons">
             <McButton variant='nextQuestion' @click="questionNumber > 1 ? (questionNumber--, isRecto=true) : null">< previous question</McButton>
-            <McButton variant='nextQuestion' @click='rectoVerso'>See Answer</McButton>
+            <McButton variant='nextQuestion' @click='rectoVerso' v-if="!isRecto">See Question</McButton>
+
+            <McButton variant='nextQuestion' @click='rectoVerso' v-if="isRecto">See Answer</McButton>
             <McButton variant='nextQuestion' @click="questionNumber == deck.length ? null : (questionNumber++,isRecto=true)">Next question ></McButton>
         </div>
 
     </div>
 </template>
+
 
 <style scoped>
 .Practice-page {
