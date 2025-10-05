@@ -22,7 +22,7 @@ jobs:
           password: ${{ secrets.BACKEND_PASSWORD }}
           port: ${{ secrets.BACKEND_SSH_PORT }}
           script: |
-            export PATH="~/.bun/bin/bun:$PATH"
+            export PATH="$HOME/.bun/bin:$PATH"
             cd ${{ secrets.BACKEND_CWD }}
 
             # In case of fail, rollback to initial state.
