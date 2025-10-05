@@ -1,0 +1,52 @@
+name: Deploy - Server
+on:
+  push:
+    paths:
+      - 'backend/**'
+    branches:
+      - master
+      # TODO: remove later. This is only for testing purposes.
+      - '@leflon/ci'
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy server
+        uses: appleboy/ssh-action
+        env:
+          PORT: ${{ vars.BACKEND_PORT }}
+        with:
+          host: ${{ secrets.BACKEND_HOST }}
+          username: ${{ secrets.BACKEND_USERNAME }}
+          password: ${{ secrets.BACKEND_PASSWORD }}
+          port: ${{ secrets.BACKEND_SSH_PORT }}
+          script: |
+            cd ${{ secrets.BACKEND_CWD }}
+
+            # In case of fail, rollback to initial state.
+            PREVIOUS_COMMIT=$(git rev-parse HEAD)
+
+            # Update code
+            git checkout HEAD -- .
+            git pull
+
+            # Install new deps
+            bun install
+
+            # Restart daemon
+            PORT=${PORT} bun run prod:restart || bun run prod:start
+
+            # Health check
+            sleep 5
+            # stderror goes to /dev/null, so no output is given on fail, triggering error.
+            if curl -f http://localhost:${PORT}/api/health 2>/dev/null; then
+              echo "Deployment successful!"
+            else
+              echo "Health check failed, rolling back..."
+              git checkout $PREVIOUS_COMMIT -- .
+              bun install
+              bun run prod:restart
+              # Exit with error
+              exit 1
+            fi
