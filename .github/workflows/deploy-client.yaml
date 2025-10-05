@@ -22,6 +22,7 @@ jobs:
           password: ${{ secrets.FRONTEND_PASSWORD }}
           port: ${{ secrets.FRONTEND_SSH_PORT }}
           script: |
+            set -e
             export PATH="$HOME/.bun/bin:$PATH"
             export PORT=${{ vars.FRONTEND_PORT }}
             cd ${{ secrets.FRONTEND_CWD }}
