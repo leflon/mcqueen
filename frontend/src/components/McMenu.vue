@@ -1,4 +1,5 @@
 <template>
+
   <div class="Menu">
     <RouterLink to="/" class="Menu-Logo">
       <img src="/images/cars-flash-mc-queen-verso.png" alt="Mcqueen" />
@@ -6,7 +7,6 @@
     </RouterLink>
     <div class="Menu-buttons">
       <RouterLink to="/flashcards">Your Cards</RouterLink>
-      <RouterLink to="/edit_mode">Edit mode</RouterLink>
       <RouterLink to="/practice">Practice</RouterLink>
       <RouterLink class="auth" to="/auth">
         <div v-if="store.currentUser">

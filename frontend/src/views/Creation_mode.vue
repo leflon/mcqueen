@@ -1,18 +1,14 @@
 <template>
-    <div class="Edit-mode-page">
-        <div class="Side-bar" :class="{ display: hide_sidebar, hidden: !hide_sidebar}">
+    <div class="Creation-mode-page">
+        <div v-if="others_list_infos.length!==0" class="Side-bar" :class="{ display: hide_sidebar, hidden: !hide_sidebar}">
             <div class="Side-bar-content" :class="{ display: hide_sidebar, hidden: !hide_sidebar }">
                 <h2>Your FlashCards</h2>
 
                 <ul>
-                    <li><h3>Physics</h3></li>
-                    
-                    <li><h3>Biology</h3></li>
-                    
-                    <li><h3>Maths</h3></li>
-                    
+                    <li v-for="value in others_list_infos" :key="value['id']" @click="navigate_to_other_lists(value['id'])" style="cursor: pointer;">
+                        <h3>{{ value['name'] }}</h3>
+                    </li>
                 </ul>
-                <button >Add more +</button>
             </div>
             
             <button class="hide-display-button" @click="toggle_sidebar">
@@ -22,50 +18,52 @@
                 </div>
             </button>
         </div>
-        <div class="Edit-Mode-section" :class="{ display: hide_sidebar, hidden: !hide_sidebar}">
-            <h1>Edit mode</h1>
-            <input type="text" placeholder="Change flascard title...">
-            <div class="Edit-Mode-Buttons">
-                <button>Delete all</button>
-                <button>Save</button>
+        <div class="Creation-mode-section" :class="{ display: hide_sidebar, hidden: !hide_sidebar}">
+            <h1>Create New List</h1>
+            <input 
+                type="text" 
+                placeholder="Enter list name..." 
+                v-model="new_list_name"
+            >
+            <div class="Creation-mode-Buttons">
+                <button @click="save_new_list">Save New List</button>
             </div>
             
             <div class="Card-section">
                 <div class="Add-card-section">
                     <div >
                         <p>Question</p>
-                        <textarea placeholder="Insert a question"></textarea>
+                        <textarea placeholder="Insert a question" v-model="ipt_question"></textarea>
                     </div>
                     <div >
                         <p>Answer</p>
-                        <textarea placeholder="Insert an answer"></textarea>
+                        <textarea placeholder="Insert an answer" v-model="ipt_answer"></textarea>
                     </div>
                     <div>
-                        <button>
+                        <button @click="add_flashcard">
                             Add FlashCard +
                         </button>
                     </div>
                     
                 </div>
 
-                <div class="Single-Card-section">
-                    <div >
+                <div class="Single-Card-section" v-for="(value, index) in local_flashcards" :key="index">
+                    <div>
                         <p>Question</p>
-                        <textarea placeholder="Insert a question"></textarea>
+                        <textarea placeholder="Insert a question" v-model="value.question_text"></textarea>
                     </div>
-                    <div >
+                    <div>
                         <p>Answer</p>
-                        <textarea placeholder="Insert an answer"></textarea>
+                        <textarea placeholder="Insert an answer" v-model="value.answer_text"></textarea>
                     </div>
                     <div>
                         <div class="Card-buttons">
-                            <button>Save</button>
-                            <button>Delete</button>
+                            <button @click="remove_local_flashcard(index)">Delete</button>
                         </div>
                     </div>
-                    
-                    
                 </div>
+
+                
             </div>
             
         </div>
@@ -76,18 +74,143 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { api } from '../lib/api';
+import { useRouter } from 'vue-router'
 
-const hide_sidebar = ref(false)
 
+const router = useRouter()
+
+// Input fields for new flashcards
+let ipt_question = ref("")
+let ipt_answer = ref("")
+
+// Title of the new list
+const new_list_name = ref("") 
+// Local array of flashcards that will be added to the backend when saving
+const local_flashcards = ref<{question_text: string, answer_text: string}[]>([]) 
+// Array of other Lists for sidebar navigation
+const others_list_infos = ref<any[]>([]) 
+
+// Sidebar visibility state
+const hide_sidebar = ref(false);
+
+//Function to open and close the sidebar
 function toggle_sidebar(){
     hide_sidebar.value = !hide_sidebar.value
 }
 
+
+//Functions to GET information
+
+async function get_others_list_info() {
+    try {
+        const data = await api('/user-content/collections', 'GET')
+        
+        others_list_infos.value = data.lists;
+
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+//Functions to add information locally
+
+function add_flashcard() {
+    if (!ipt_question.value.trim() || !ipt_answer.value.trim()) {
+        alert("Question and answer are required");
+        return;
+    }
+
+    local_flashcards.value.push({
+        question_text: ipt_question.value,
+        answer_text: ipt_answer.value
+    });
+    
+    ipt_question.value = ""
+    ipt_answer.value = ""
+}
+
+//Function to refresh the content
+
+function update_content(){
+    new_list_name.value = ""
+    local_flashcards.value = []
+    get_others_list_info()
+}
+
+//Functions to save information to API
+
+async function save_new_list() {
+    if (!new_list_name.value.trim()) {
+        alert("Please enter a list name")
+        return
+    }
+
+    if (local_flashcards.value.length === 0) {
+        alert("Please add at least one flashcard before saving")
+        return
+    }
+
+    try {
+        const listResponse = await api('/user-content/list', 'POST', {
+            name: new_list_name.value,
+            parent_id: ""
+        });
+
+        const newListId = listResponse.listId;
+
+        const flashcardsToAdd = local_flashcards.value.map(card => ({
+            question_text: card.question_text,
+            question_media_id: null,
+            answer_text: card.answer_text,
+            answer_media_id: null
+        }));
+
+        await api(`/user-content/flashcards/${newListId}`, 'POST', {
+            flashcards: flashcardsToAdd
+        });
+
+        alert("List and flashcards saved successfully!")
+        
+        new_list_name.value = ""
+        local_flashcards.value = []
+        
+        router.push(`/flashcards`).then(() => {
+            window.location.reload();
+        });
+
+    } catch (err) {
+        console.error(err);
+        alert("Failed to create list");
+    }
+}
+
+//Functions to delete information locally
+
+function remove_local_flashcard(index: number) {
+    local_flashcards.value.splice(index, 1);
+}
+
+//Function to navigate to others page through the side bar
+
+function navigate_to_other_lists(list_id:string){
+    router.push(`/edit_mode/${list_id}`).then(() => {
+    window.location.reload();
+    });
+}
+
+//Function to update the content on loading.
+
+onMounted(()=>{
+    update_content()
+})
+
+
 </script>
 
 <style scoped>
-    .Edit-mode-page{
+    .Creation-mode-page{
         width: 100%;
         min-height: 550px;
         display: flex;
@@ -189,12 +312,12 @@ function toggle_sidebar(){
 
     /* Main content section */
 
-    .Edit-Mode-section.hidden{
+    .Creation-mode-section.hidden{
         width: 98%;
         
     }
 
-    .Edit-Mode-section{
+    .Creation-mode-section{
         width: 80%;
         display: flex;
         flex-direction: column;
@@ -202,11 +325,11 @@ function toggle_sidebar(){
         gap: 20px;
     }
 
-    .Edit-Mode-section h1{
+    .Creation-mode-section h1{
         color: white;
     }
 
-    .Edit-Mode-section > input{
+    .Creation-mode-section > input{
         font-size: large;
         text-align: center;
         border: none;
@@ -216,12 +339,12 @@ function toggle_sidebar(){
         width: 300px;
     }
 
-    .Edit-Mode-Buttons{
+    .Creation-mode-Buttons{
         display: flex;
         gap: 15px;
     }
 
-    .Edit-Mode-Buttons button{
+    .Creation-mode-Buttons button{
         min-width: 200px;
         height: 40px;
         background-color: #e9b796;
