@@ -1,0 +1,42 @@
+name: Deploy - Client
+on:
+  push:
+    paths:
+      - 'frontend/**'
+    branches:
+      - master
+      # Testing purpose only
+      - '@leflon/ci'
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy client
+        uses: appleboy/ssh-action@v1
+        env:
+          PORT: ${{ vars.FRONTEND_PORT }}
+        with:
+          host: ${{ secrets.FRONTEND_HOST }}
+          username: ${{ secrets.FRONTEND_USERNAME }}
+          password: ${{ secrets.FRONTEND_PASSWORD }}
+          port: ${{ secrets.FRONTEND_SSH_PORT }}
+          script: |
+            export PATH="$HOME/.bun/bin:$PATH"
+            export PORT=${{ vars.FRONTEND_PORT }}
+            cd ${{ secrets.FRONTEND_CWD }}
+
+            # Update code
+            git checkout HEAD -- .
+            git pull
+
+            # Install new deps
+            bun install
+
+            # Build client
+            bun run build
+
+            # Restart daemon
+            PM2_SERVE_PORT=${PORT} bun run prod:restart>/dev/null || bun run prod:start>/dev/null
+
+            echo "Deployment sucessful!"
