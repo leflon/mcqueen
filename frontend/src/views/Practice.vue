@@ -5,7 +5,7 @@ import McButton from '../components/McButton.vue'
 import { ref } from 'vue'
 
 const secondsOnCard= ref(0)
-const questionNumber= ref(10)
+const questionNumber= ref(0)
 
 const isRecto= ref(true)
 
@@ -23,6 +23,77 @@ function resetAction() : void {
   questionNumber.value=1
   isRecto.value=true
 }
+
+
+/*
+We need to fetch cards
+
+So I need to have a test deck
+It seems that there is the following structure for card
+          - `id` (TEXT, PRIMARY KEY)
+          - `question_text` (TEXT, nullable)
+          - `question_media_id` (TEXT, FK → Media.id, nullable)
+          - `answer_text` (TEXT, nullable)
+          - `answer_media_id` (TEXT, FK → Media.id, nullable)
+          - `list_id` (TEXT, NOT NULL, FK → Container.id)
+          - `created_at` (INTEGER, NOT NULL)
+But in my case, the deck is actually something important,
+because we need an attribute "question number" for example,
+so I'll try the following:
+  The deck is made by fetching all cards with the same `list_id`
+  the question number is a local variable for the Practice view, not something stored on the server side 
+*/
+
+//trying to do a Flashcard in Typescript like specified in backend's readme
+interface Flashcard {
+  id: string
+  question_text: string | null
+  question_media_id: string | null
+  answer_text: string | null
+  answer_media_id: string | null
+  list_id: string
+  created_at: number
+}
+
+
+function loadDeckFromBackend() : Flashcard[] {
+  /* Cette fonction cherche un deck dans le backend
+  Je ne sais pas si elle a besoin de prendre comme argument l'id ou le nom du deck à fetch
+  elle doit retourner un tableau de Flashcards qui sera le deck
+  pour le moment elle ne fait rien donc pour la demo je vais juste return un tableau créé en dur
+  le tableau créé en dur sera remplacé par le code qui fetch dans le backend
+  */
+  
+  
+  
+  //Local construction, of a deck, should be directly imported with the backend in the future 
+  const deck: Flashcard[] = [
+    {
+      id: '1',
+      question_text: 'What are the four main types of macromolecules?',
+      question_media_id: null,
+      answer_text: 'Carbohydrates, lipids, proteins, nucleic acids.',
+      answer_media_id: null,
+      list_id: '1',
+      created_at: Date.now()
+    },
+    {
+      id: '2',
+      question_text: 'What is the function of DNA?',
+      question_media_id: null,
+      answer_text: 'DNA stores and transmits genetic information.',
+      answer_media_id: null,
+      list_id: '1',
+      created_at: Date.now()
+    }
+  ]
+  
+  return deck
+}
+
+const deck=ref<Flashcard[]>([])
+
+deck.value= loadDeckFromBackend()
 
 </script>
 
@@ -50,25 +121,29 @@ function resetAction() : void {
             </div>
         </div>
         
-        <!-- Ici j'ai 
-        -intégré le composant MyCard dont on peut voir la première création avec ce commit
-        -intégré les McButton dont j'ai amélioré le style pour le rendre plus réutilisable
-        -j'y ai lié les fonctions de chronomètre et de score ainsi que la gestion des question
-        /!\ C'est un prototype qui n'intègre pas du tout le backend, j'ai intégré une question pour faire une preview
+        <!-- 
+          - `id` (TEXT, PRIMARY KEY)
+          - `question_text` (TEXT, nullable)
+          - `question_media_id` (TEXT, FK → Media.id, nullable)
+          - `answer_text` (TEXT, nullable)
+          - `answer_media_id` (TEXT, FK → Media.id, nullable)
+          - `list_id` (TEXT, NOT NULL, FK → Container.id)
+          - `created_at` (INTEGER, NOT NULL)
         -->
         
         <McCard 
+        v-if="deck[questionNumber-1]"
         :recto='isRecto' 
-        :rectoText="'What are the four main types of macromolecules in living organisms?'" 
-        :versoText="'Carbohydrates, Lipids, Proteins, Nucleic acids'" 
+        :rectoText='deck[questionNumber-1].question_text' 
+        :versoText='deck[questionNumber-1].answer_text' 
         :questionNumber='questionNumber'
         @cardSeen='chronometer' />
         
       
         <div class="Control-buttons">
-        <McButton @click='questionNumber > 1 ? questionNumber-- : ()=>{} '>< previous question</McButton>
-        <McButton @click='rectoVerso'>See Answer</McButton>
-        <McButton @click='questionNumber++'>Next question ></McButton>
+        <McButton variant='nextQuestion' @click="questionNumber > 1 ? (questionNumber--, isRecto=true) : null">< previous question</McButton>
+        <McButton variant='nextQuestion' @click='rectoVerso'>See Answer</McButton>
+        <McButton variant='nextQuestion' @click="questionNumber == deck.length ? null : (questionNumber++,isRecto=true)">Next question ></McButton>
         </div>
 
     </div>
