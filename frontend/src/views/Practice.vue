@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import McCard from '../components/McCard.vue'
 import McButton from '../components/McButton.vue'
-
+import { RouterLink } from 'vue-router';
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+
 
 const secondsOnCard= ref(0)
-const questionNumber= ref(0)
+const questionNumber= ref(1)
 
 const isRecto= ref(true)
 
@@ -14,7 +19,7 @@ function chronometer() : void {
 }
 
 function rectoVerso() : void {
-  isRecto.value=false
+  isRecto.value=!isRecto.value
 }
 
 
@@ -24,6 +29,10 @@ function resetAction() : void {
   isRecto.value=true
 }
 
+function secondsToMMSS(seconds: number) : string {
+  
+  return `${Math.floor(seconds/60)}:${ seconds%60 < 10 ? '0'+seconds%60 : seconds%60}`
+}
 
 /*
 We need to fetch cards
@@ -95,6 +104,10 @@ const deck=ref<Flashcard[]>([])
 
 deck.value= loadDeckFromBackend()
 
+function exit() : void {
+  router.push('/flashcards')
+}
+
 </script>
 
 <template>
@@ -108,16 +121,17 @@ deck.value= loadDeckFromBackend()
             <h2>Biology</h2>
             <div class="Title-buttons">
                 <button @click="resetAction">Reset</button>
-                <button>Exit</button>
+                <button @click='exit'>Exit</button>
+                
             </div>
         </div>
 
         <div class="Stats-section">
             <div class="Stats-item">
-                <p>Time : {{ secondsOnCard }}</p>
+                <p>{{ secondsToMMSS(secondsOnCard) }}</p>
             </div>
             <div class="Stats-item">
-                <p>Questions : {{ questionNumber }}</p>
+                <p>Question : {{ questionNumber }}</p>
             </div>
         </div>
         
