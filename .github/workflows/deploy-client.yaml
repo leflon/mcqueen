@@ -38,6 +38,6 @@ jobs:
             bun run prod:build
 
             # Restart daemon
-            PM2_SERVE_PORT=${PORT} bun run prod:restart>/dev/null || bun run prod:start>/dev/null
+            PM2_SERVE_PORT=${PORT} bun run prod:restart>/dev/null ||PM2_SERVE_PORT=${PORT} bun run prod:start>/dev/null
 
             echo "Deployment sucessful!"

@@ -35,7 +35,7 @@ jobs:
             bun install
 
             # Restart daemon
-            PORT=${PORT} bun run prod:restart>/dev/null || bun run prod:start>/dev/null
+            PORT=${PORT} bun run prod:restart>/dev/null || PORT=${PORT}  bun run prod:start>/dev/null
 
             # Health check
             sleep 5
