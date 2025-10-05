@@ -5,8 +5,6 @@ on:
       - 'backend/**'
     branches:
       - master
-      # TODO: remove later. This is only for testing purposes.
-      - '@leflon/ci'
 jobs:
   deploy:
     name: Deploy
