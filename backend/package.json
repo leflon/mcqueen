@@ -3,13 +3,17 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts",
-    "init-db": "bun run dbInit.ts"
+    "dev": "bun run --hot src/index.ts --no-clear-screen",
+    "init-db": "bun run dbInit.ts",
+    "start": "bun run src/index.ts",
+    "prod:start": "pm2 start --interpreter ~/.bun/bin/bun src/index.ts --name mcqueen:backend",
+    "prod:restart": "pm2 restart mcqueen:backend"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
     "@elysiajs/jwt": "^1.4.0",
-    "elysia": "latest"
+    "elysia": "latest",
+    "pm2": "^6.0.13"
   },
   "devDependencies": {
     "bun-types": "latest"
