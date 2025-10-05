@@ -8,7 +8,6 @@
         </RouterLink>
         <div class="Menu-buttons">
             <RouterLink to="/flashcards">Your Cards</RouterLink>
-            <RouterLink to="/edit_mode">Edit mode</RouterLink>
             <RouterLink to="/practice">Practice</RouterLink>
             <RouterLink to="#">Log in</RouterLink>
             <RouterLink to="#">Sign up</RouterLink>
