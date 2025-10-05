@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy server
-        uses: appleboy/ssh-action
+        uses: appleboy/ssh-action@v1
         env:
           PORT: ${{ vars.BACKEND_PORT }}
         with:
