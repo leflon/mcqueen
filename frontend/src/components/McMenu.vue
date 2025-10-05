@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import { RouterLink } from 'vue-router';
+
+</script>
+
 <template>
     <div class="Menu">
         
@@ -16,12 +21,6 @@
         
     </div>
 </template>
-
-
-<script setup lang="ts">
-import { RouterLink } from 'vue-router';
-
-</script>
 
 
 <style scoped>

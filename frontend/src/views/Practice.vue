@@ -1,40 +1,78 @@
+<script setup lang="ts">
+import McCard from '../components/McCard.vue'
+import McButton from '../components/McButton.vue'
+
+import { ref } from 'vue'
+
+const secondsOnCard= ref(0)
+const questionNumber= ref(10)
+
+const isRecto= ref(true)
+
+function chronometer() : void {
+  setInterval( ()=> { secondsOnCard.value++ }, 1000) 
+}
+
+function rectoVerso() : void {
+  isRecto.value=false
+}
+
+
+function resetAction() : void {
+  secondsOnCard.value=0
+  questionNumber.value=1
+  isRecto.value=true
+}
+
+</script>
+
 <template>
+
+    <!-- Je ne sais pas si cela servirait de mettre tous les titres etc en composants 
+    Je pense d'abord tester le backend    -->
     <div class="Practice-page">
         <h1>Practice</h1>
         
         <div class="Title-section">
             <h2>Biology</h2>
             <div class="Title-buttons">
-                <button>Reset</button>
+                <button @click="resetAction">Reset</button>
                 <button>Exit</button>
             </div>
         </div>
 
         <div class="Stats-section">
             <div class="Stats-item">
-                <p>Time : 69 seconds</p>
+                <p>Time : {{ secondsOnCard }}</p>
             </div>
             <div class="Stats-item">
-                <p>Questions : 10</p>
+                <p>Questions : {{ questionNumber }}</p>
             </div>
         </div>
-
-        <div class="Question-card">
-            <h3>Question : 2</h3>
-            <p>What are the four main types of macromolecules in living organisms?</p>
-        </div>
-
+        
+        <!-- Ici j'ai 
+        -intégré le composant MyCard dont on peut voir la première création avec ce commit
+        -intégré les McButton dont j'ai amélioré le style pour le rendre plus réutilisable
+        -j'y ai lié les fonctions de chronomètre et de score ainsi que la gestion des question
+        /!\ C'est un prototype qui n'intègre pas du tout le backend, j'ai intégré une question pour faire une preview
+        -->
+        
+        <McCard 
+        :recto='isRecto' 
+        :rectoText="'What are the four main types of macromolecules in living organisms?'" 
+        :versoText="'Carbohydrates, Lipids, Proteins, Nucleic acids'" 
+        :questionNumber='questionNumber'
+        @cardSeen='chronometer' />
+        
+      
         <div class="Control-buttons">
-            <button class="Previous-btn">< Previous question</button>
-            <button class="See-answer-btn">See answer</button>
-            <button class="Next-btn">Next question ></button>
+        <McButton @click='questionNumber > 1 ? questionNumber-- : ()=>{} '>< previous question</McButton>
+        <McButton @click='rectoVerso'>See Answer</McButton>
+        <McButton @click='questionNumber++'>Next question ></McButton>
         </div>
+
     </div>
 </template>
-
-<script lang="ts">
-
-</script>
 
 <style scoped>
 .Practice-page {
