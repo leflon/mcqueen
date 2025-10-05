@@ -1,111 +1,87 @@
 <script setup lang="ts">
-import McCard from '../components/McCard.vue'
-import McButton from '../components/McButton.vue'
+    import McCard from '../components/McCard.vue'
+    import McButton from '../components/McButton.vue'
 
-import { ref } from 'vue'
+    import { ref, onMounted } from 'vue'
+    import { useRoute } from 'vue-router'
+    import { api } from '../lib/api'
 
-const secondsOnCard= ref(0)
-const questionNumber= ref(0)
+    const route = useRoute()
+    const id = route.params.id
 
-const isRecto= ref(true)
+    const secondsOnCard= ref(0) //Time
+    const questionNumber= ref(1) //Question number
 
-function chronometer() : void {
-  setInterval( ()=> { secondsOnCard.value++ }, 1000) 
-}
+    const isRecto= ref(true)
 
-function rectoVerso() : void {
-  isRecto.value=false
-}
-
-
-function resetAction() : void {
-  secondsOnCard.value=0
-  questionNumber.value=1
-  isRecto.value=true
-}
-
-
-/*
-We need to fetch cards
-
-So I need to have a test deck
-It seems that there is the following structure for card
-          - `id` (TEXT, PRIMARY KEY)
-          - `question_text` (TEXT, nullable)
-          - `question_media_id` (TEXT, FK → Media.id, nullable)
-          - `answer_text` (TEXT, nullable)
-          - `answer_media_id` (TEXT, FK → Media.id, nullable)
-          - `list_id` (TEXT, NOT NULL, FK → Container.id)
-          - `created_at` (INTEGER, NOT NULL)
-But in my case, the deck is actually something important,
-because we need an attribute "question number" for example,
-so I'll try the following:
-  The deck is made by fetching all cards with the same `list_id`
-  the question number is a local variable for the Practice view, not something stored on the server side 
-*/
-
-//trying to do a Flashcard in Typescript like specified in backend's readme
-interface Flashcard {
-  id: string
-  question_text: string | null
-  question_media_id: string | null
-  answer_text: string | null
-  answer_media_id: string | null
-  list_id: string
-  created_at: number
-}
-
-
-function loadDeckFromBackend() : Flashcard[] {
-  /* Cette fonction cherche un deck dans le backend
-  Je ne sais pas si elle a besoin de prendre comme argument l'id ou le nom du deck à fetch
-  elle doit retourner un tableau de Flashcards qui sera le deck
-  pour le moment elle ne fait rien donc pour la demo je vais juste return un tableau créé en dur
-  le tableau créé en dur sera remplacé par le code qui fetch dans le backend
-  */
-  
-  
-  
-  //Local construction, of a deck, should be directly imported with the backend in the future 
-  const deck: Flashcard[] = [
-    {
-      id: '1',
-      question_text: 'What are the four main types of macromolecules?',
-      question_media_id: null,
-      answer_text: 'Carbohydrates, lipids, proteins, nucleic acids.',
-      answer_media_id: null,
-      list_id: '1',
-      created_at: Date.now()
-    },
-    {
-      id: '2',
-      question_text: 'What is the function of DNA?',
-      question_media_id: null,
-      answer_text: 'DNA stores and transmits genetic information.',
-      answer_media_id: null,
-      list_id: '1',
-      created_at: Date.now()
+    function chronometer() : void {
+    setInterval( ()=> { secondsOnCard.value++ }, 1000) 
     }
-  ]
-  
-  return deck
+
+    function rectoVerso() : void {
+    isRecto.value=false
+    }
+
+
+    function resetAction() : void {
+    secondsOnCard.value=0
+    questionNumber.value=1
+    isRecto.value=true
+    }
+
+
+    interface Flashcard {
+    id: string
+    question_text: string | null
+    question_media_id: string | null
+    answer_text: string | null
+    answer_media_id: string | null
+    list_id: string
+    created_at: number
+    }
+
+    const deck = ref<Flashcard[]>([])
+    const list_title = ref("") 
+
+
+
+    async function loadDeckFromBackend() {
+        try {
+            const data = await api(`/user-content/flashcards/${id}`,'GET')
+            deck.value = data["flashcards"]
+        } catch (error) {
+            console.log(error)
+        }  
+    }
+
+    async function get_list_info() {
+    try {
+        const data = await api('/user-content/collections', 'GET')
+        let list_flashcards = data.lists.find((card: any) => card["id"] === id);
+        list_title.value = list_flashcards?.name ?? ""
+    } catch (err) {
+        console.error(err)
+    }
 }
 
-const deck=ref<Flashcard[]>([])
 
-deck.value= loadDeckFromBackend()
 
+    
+    
+    onMounted(()=>{
+        loadDeckFromBackend()
+        get_list_info()
+    })
 </script>
 
 <template>
 
-    <!-- Je ne sais pas si cela servirait de mettre tous les titres etc en composants 
-    Je pense d'abord tester le backend    -->
+  
     <div class="Practice-page">
         <h1>Practice</h1>
         
         <div class="Title-section">
-            <h2>Biology</h2>
+            <h2>{{ list_title }}</h2>
             <div class="Title-buttons">
                 <button @click="resetAction">Reset</button>
                 <button>Exit</button>
@@ -121,15 +97,7 @@ deck.value= loadDeckFromBackend()
             </div>
         </div>
         
-        <!-- 
-          - `id` (TEXT, PRIMARY KEY)
-          - `question_text` (TEXT, nullable)
-          - `question_media_id` (TEXT, FK → Media.id, nullable)
-          - `answer_text` (TEXT, nullable)
-          - `answer_media_id` (TEXT, FK → Media.id, nullable)
-          - `list_id` (TEXT, NOT NULL, FK → Container.id)
-          - `created_at` (INTEGER, NOT NULL)
-        -->
+       
         
         <McCard 
         v-if="deck[questionNumber-1]"
@@ -141,9 +109,9 @@ deck.value= loadDeckFromBackend()
         
       
         <div class="Control-buttons">
-        <McButton variant='nextQuestion' @click="questionNumber > 1 ? (questionNumber--, isRecto=true) : null">< previous question</McButton>
-        <McButton variant='nextQuestion' @click='rectoVerso'>See Answer</McButton>
-        <McButton variant='nextQuestion' @click="questionNumber == deck.length ? null : (questionNumber++,isRecto=true)">Next question ></McButton>
+            <McButton variant='nextQuestion' @click="questionNumber > 1 ? (questionNumber--, isRecto=true) : null">< previous question</McButton>
+            <McButton variant='nextQuestion' @click='rectoVerso'>See Answer</McButton>
+            <McButton variant='nextQuestion' @click="questionNumber == deck.length ? null : (questionNumber++,isRecto=true)">Next question ></McButton>
         </div>
 
     </div>

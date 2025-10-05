@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="Practice-Edit-buttons">
-                    <button>Practice</button>
+                    <button @click="()=>router.push(`/practice/${value['id']}`)">Practice</button>
                     <button @click="()=>router.push(`/edit_mode/${value['id']}`)">Edit</button>
                 </div>
             </div>
