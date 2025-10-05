@@ -7,7 +7,7 @@
     "init-db": "bun run dbInit.ts",
     "start": "bun run src/index.ts",
     "prod:start": "pm2 start --interpreter ~/.bun/bin/bun src/index.ts --name mcqueen:backend",
-    "prod:restart": "pm2 restart mcqueen:backend"
+    "prod:restart": "pm2 restart mcqueen:backend --update-env"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
