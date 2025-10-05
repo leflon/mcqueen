@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory } from "vue-router";
 
 import Home from "./views/Home.vue";
@@ -5,6 +6,7 @@ import CheckFlashcards from "./views/Check_flashcards.vue";
 import Edit_mode from "./views/Edit_mode.vue";
 import Practice from "./views/Practice.vue";
 import Creation_mode from "./views/Creation_mode.vue";
+import Auth from './views/Auth.vue';
 
 const routes = [
     {
@@ -31,12 +33,17 @@ const routes = [
         path: "/creation_mode",
         name: "Creation_mode",
         component: Creation_mode
+    },
+    {
+      path: '/auth',
+      name: 'Auth',
+      component: Auth
     }
+
 
 ];
 
 export const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes
 });
-

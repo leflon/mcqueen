@@ -2,6 +2,7 @@ import jwt from '@elysiajs/jwt';
 import { Elysia, t } from 'elysia';
 import { COOKIE_CONFIG, JWT_CONFIG } from '../lib/config';
 import { createUser, getUser } from '../lib/helpers';
+import { authenticated } from '../guards/authenticated';
 
 export const auth = new Elysia({ prefix: '/auth' })
   .use(jwt(JWT_CONFIG))
@@ -76,4 +77,6 @@ export const auth = new Elysia({ prefix: '/auth' })
   .get('/logout', ({ cookie }) => {
     cookie.auth.remove();
     return { ok: true };
-  });
+  })
+  .use(authenticated)
+  .get('/me', ({ user }) => user);
