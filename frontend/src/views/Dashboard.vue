@@ -31,7 +31,7 @@
           </div>
 
           <div class="dashboard__header-actions">
-            <Button variant="accent">Practice </Button>
+            <Button variant="accent" @click="launchPractice">Practice</Button>
           </div>
         </div>
 
@@ -200,7 +200,6 @@ const retryLoadFlashcards = () => {
 
 const showCreateFirstList = () => {
   // This will trigger the sidebar to show the new list modal
-  // We can emit an event or use a more direct approach
   const sidebarComponent = document.querySelector('.sidebar');
   if (sidebarComponent) {
     const addButton = sidebarComponent.querySelector(
@@ -208,6 +207,11 @@ const showCreateFirstList = () => {
     ) as HTMLElement;
     addButton?.click();
   }
+};
+
+const launchPractice = () => {
+  if (!selectedListId.value) return;
+  router.push(`/practice/${selectedListId.value}`);
 };
 
 // Initialize and handle route changes
@@ -347,7 +351,7 @@ onMounted(() => {
 
 .dashboard__flashcards {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
 }
 
