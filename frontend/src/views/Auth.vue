@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { api } from '../lib/api';
 import { Loader } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '../store';
+import { useUserStore } from '../stores';
 
 const router = useRouter();
 const store = useUserStore();
@@ -49,7 +49,7 @@ const handleSubmit = async (type: 'login' | 'register') => {
   }
   isLoading.value[type] = false;
   store.setUser(response);
-  router.push('/flashcards');
+  router.push('/dashboard');
 };
 
 const handleLogin = async () => handleSubmit('login');

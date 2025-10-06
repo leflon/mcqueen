@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import McMenu from './components/McMenu.vue';
-import { useUserStore } from './store';
+import MenuBar from './components/MenuBar.vue';
+import { useUserStore } from './stores';
 import { onMounted } from 'vue';
 
 // Initialize store on mount.
@@ -10,21 +10,28 @@ onMounted(() => store.initializeAuth());
 </script>
 
 <template>
-  <McMenu></McMenu>
-  <RouterView></RouterView>
+  <div class="app-layout">
+    <div class="app-layout__menu">
+      <MenuBar></MenuBar>
+    </div>
+    <div class="app-layout__content">
+      <RouterView></RouterView>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.app-layout__menu {
+  height: 80px;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.app-layout__content {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
 }
 </style>

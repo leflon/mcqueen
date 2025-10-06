@@ -18,6 +18,7 @@ All routes require authentication unless otherwise specified.
 Register a new user account.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -26,6 +27,7 @@ Register a new user account.
 ```
 
 **Response:** `201 Created`
+
 ```json
 {
   "ok": true,
@@ -39,6 +41,7 @@ Register a new user account.
 Login to an existing account.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -47,6 +50,7 @@ Login to an existing account.
 ```
 
 **Response:** `200 OK`
+
 ```json
 {
   "ok": true,
@@ -67,6 +71,7 @@ All routes in this section require authentication.
 Get the user's content tree structure (directories and lists).
 
 **Response:** `200 OK`
+
 ```json
 {
   "id": "root",
@@ -93,9 +98,11 @@ Get the user's content tree structure (directories and lists).
 Get all flashcards in a specific list.
 
 **Parameters:**
+
 - `id` - The list ID
 
 **Response:** `200 OK`
+
 ```json
 {
   "flashcards":
@@ -112,6 +119,7 @@ Get all flashcards in a specific list.
 ```
 
 **Error Response:** `403 Forbidden`
+
 ```json
 {
   "ok": false,
@@ -124,6 +132,7 @@ Get all flashcards in a specific list.
 Create a new directory.
 
 **Request Body:**
+
 ```json
 {
   "name": "string"
@@ -131,6 +140,7 @@ Create a new directory.
 ```
 
 **Response:** `201 Created`
+
 ```json
 {
   "ok": true,
@@ -143,6 +153,7 @@ Create a new directory.
 Create a new flashcard list.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -151,6 +162,7 @@ Create a new flashcard list.
 ```
 
 **Response:** `201 Created`
+
 ```json
 {
   "ok": true,
@@ -164,9 +176,11 @@ Create a new flashcard list.
 Edit a container (list or directory).
 
 **Parameters:**
+
 - `id` - The container ID
 
 **Request Body:**
+
 ```json
 {
   "name": "string (optional)",
@@ -175,6 +189,7 @@ Edit a container (list or directory).
 ```
 
 **Response:** `200 OK`
+
 ```json
 {
   "ok": true,
@@ -183,6 +198,7 @@ Edit a container (list or directory).
 ```
 
 **Error Response:** `403 Forbidden`
+
 ```json
 {
   "ok": false,
@@ -195,9 +211,11 @@ Edit a container (list or directory).
 Delete a container (list or directory). This will cascade delete all children.
 
 **Parameters:**
+
 - `id` - The container ID
 
 **Response:** `200 OK`
+
 ```json
 {
   "ok": true,
@@ -206,6 +224,7 @@ Delete a container (list or directory). This will cascade delete all children.
 ```
 
 **Error Response:** `403 Forbidden`
+
 ```json
 {
   "ok": false,
@@ -218,9 +237,11 @@ Delete a container (list or directory). This will cascade delete all children.
 Bulk add flashcards to a list.
 
 **Parameters:**
+
 - `listId` - The list ID
 
 **Request Body:**
+
 ```json
 {
   "flashcards":
@@ -236,6 +257,7 @@ Bulk add flashcards to a list.
 **Note:** Each flashcard must have at least one question (text or media) and at least one answer (text or media).
 
 **Response:** `201 Created`
+
 ```json
 {
   "ok": true,
@@ -244,6 +266,7 @@ Bulk add flashcards to a list.
 ```
 
 **Error Response:** `403 Forbidden`
+
 ```json
 {
   "ok": false,
@@ -256,9 +279,11 @@ Bulk add flashcards to a list.
 Edit an individual flashcard.
 
 **Parameters:**
+
 - `id` - The flashcard ID
 
 **Request Body:**
+
 ```json
 {
   "question_text": "string (optional)",
@@ -267,6 +292,7 @@ Edit an individual flashcard.
 ```
 
 **Response:** `200 OK`
+
 ```json
 {
   "ok": true,
@@ -277,6 +303,7 @@ Edit an individual flashcard.
 **Error Responses:**
 
 `404 Not Found`
+
 ```json
 {
   "ok": false,
@@ -285,6 +312,7 @@ Edit an individual flashcard.
 ```
 
 `403 Forbidden`
+
 ```json
 {
   "ok": false,
@@ -297,6 +325,7 @@ Edit an individual flashcard.
 Bulk delete flashcards.
 
 **Request Body:**
+
 ```json
 {
   "ids": ["string", "string", ...]
@@ -304,6 +333,7 @@ Bulk delete flashcards.
 ```
 
 **Response:** `200 OK`
+
 ```json
 {
   "ok": true,
@@ -314,6 +344,7 @@ Bulk delete flashcards.
 **Error Responses:**
 
 `404 Not Found`
+
 ```json
 {
   "ok": false,
@@ -322,6 +353,7 @@ Bulk delete flashcards.
 ```
 
 `403 Forbidden`
+
 ```json
 {
   "ok": false,
@@ -334,12 +366,14 @@ Bulk delete flashcards.
 ## Database Schema
 
 ### User
+
 - `id` (TEXT, PRIMARY KEY)
 - `username` (TEXT, UNIQUE, NOT NULL)
 - `password_hash` (TEXT, NOT NULL)
 - `created_at` (INTEGER, NOT NULL)
 
 ### Container
+
 - `id` (TEXT, PRIMARY KEY)
 - `name` (TEXT, NOT NULL)
 - `owner` (TEXT, NOT NULL, FK → User.id)
@@ -348,6 +382,7 @@ Bulk delete flashcards.
 - `parent_id` (TEXT, FK → Container.id, nullable)
 
 ### FlashCard
+
 - `id` (TEXT, PRIMARY KEY)
 - `question_text` (TEXT, nullable)
 - `question_media_id` (TEXT, FK → Media.id, nullable)
@@ -357,10 +392,12 @@ Bulk delete flashcards.
 - `created_at` (INTEGER, NOT NULL)
 
 **Constraints:**
+
 - At least one question (text or media) required
 - At least one answer (text or media) required
 
 ### Media
+
 - `id` (TEXT, PRIMARY KEY)
 - `file` (TEXT, NOT NULL) - file path
 - `owner` (TEXT, FK → User.id, nullable)

@@ -125,7 +125,10 @@ export const userContent = new Elysia({ prefix: '/user-content' })
         return { ok: false, error: 'Flashcard not found.' };
       }
 
-      const isOwner = checkFlashCardsOwnership(flashcard.list_id, user!.id as string);
+      const isOwner = checkFlashCardsOwnership(
+        flashcard.list_id,
+        user!.id as string
+      );
       if (!isOwner) {
         set.status = 403;
         return { ok: false, error: 'This flashcard belongs to another user.' };
@@ -155,10 +158,16 @@ export const userContent = new Elysia({ prefix: '/user-content' })
           return { ok: false, error: `Flashcard ${id} not found.` };
         }
 
-        const isOwner = checkFlashCardsOwnership(flashcard.list_id, user!.id as string);
+        const isOwner = checkFlashCardsOwnership(
+          flashcard.list_id,
+          user!.id as string
+        );
         if (!isOwner) {
           set.status = 403;
-          return { ok: false, error: `Flashcard ${id} belongs to another user.` };
+          return {
+            ok: false,
+            error: `Flashcard ${id} belongs to another user.`
+          };
         }
       }
 
