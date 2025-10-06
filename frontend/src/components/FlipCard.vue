@@ -6,9 +6,9 @@
     @click="handleClick"
   >
     <div class="card-face card-front">
-      <div class="card-header" v-if="showHeader">
+      <div class="card-header">
         <h3>{{ frontTitle || 'Question' }}</h3>
-        <Eye :size="iconSize" class="card-icon" v-if="showIcon" />
+        <Eye :size="18" class="card-icon" />
       </div>
       <div class="card-content">
         <slot name="front">
@@ -17,9 +17,9 @@
       </div>
     </div>
     <div class="card-face card-back">
-      <div class="card-header" v-if="showHeader">
+      <div class="card-header">
         <h3>{{ backTitle || 'Answer' }}</h3>
-        <EyeOff :size="iconSize" class="card-icon" v-if="showIcon" />
+        <EyeOff :size="18" class="card-icon" />
       </div>
       <div class="card-content">
         <slot name="back">
@@ -41,15 +41,9 @@ interface Props {
   backTitle?: string;
   width?: string;
   height?: string;
-  clickable?: boolean;
-  showHeader?: boolean;
-  showIcon?: boolean;
-  iconSize?: number;
-  frontBackground?: string;
-  backBackground?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   isFlipped: false,
   frontText: '',
   backText: '',
@@ -57,24 +51,15 @@ const props = withDefaults(defineProps<Props>(), {
   backTitle: 'Answer',
   width: '100%',
   height: '100%',
-  clickable: true,
-  showHeader: true,
-  showIcon: true,
-  iconSize: 18,
-  frontBackground: 'var(--color-blue-secondary)',
-  backBackground: 'var(--color-blue-main)'
+  clickable: true
 });
 
 const emit = defineEmits<{
   flip: [];
-  click: [event: MouseEvent];
 }>();
 
-function handleClick(event: MouseEvent) {
-  emit('click', event);
-  if (props.clickable) {
-    emit('flip');
-  }
+function handleClick() {
+  emit('flip');
 }
 </script>
 
@@ -83,10 +68,7 @@ function handleClick(event: MouseEvent) {
   position: relative;
   cursor: pointer;
   perspective: 1000px;
-}
-
-.flip-card:not(.clickable) {
-  cursor: default;
+  cursor: pointer;
 }
 
 .card-face {
@@ -109,12 +91,12 @@ function handleClick(event: MouseEvent) {
 
 .card-front {
   transform: rotateY(0deg);
-  background-color: v-bind('props.frontBackground');
+  background-color: var(--color-blue-secondary);
 }
 
 .card-back {
   transform: rotateY(180deg);
-  background-color: v-bind('props.backBackground');
+  background-color: var(--color-blue-main);
 }
 
 .flip-card.is-flipped .card-front {

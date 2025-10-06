@@ -47,7 +47,6 @@
             back-text="Paris"
             width="100%"
             height="250px"
-            :icon-size="20"
             @flip="flipDemo"
           />
           <p class="demo-hint">Click the card to flip it!</p>
