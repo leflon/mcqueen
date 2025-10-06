@@ -2,10 +2,12 @@
   <div class="Menu">
     <RouterLink to="/" class="Menu-Logo">
       <img src="/images/cars-flash-mc-queen-verso.png" alt="Mcqueen" />
-      <h1>Flash Cards McQueen</h1>
+      <h1>McQueen</h1>
     </RouterLink>
     <div class="Menu-buttons">
-      <RouterLink to="/flashcards">Your Cards</RouterLink>
+      <RouterLink to="/dashboard" v-if="store.currentUser"
+        >Dashboard</RouterLink
+      >
       <RouterLink class="auth" to="/auth">
         <div v-if="store.currentUser">
           {{ store.currentUser.username }} (Sign out)
@@ -18,7 +20,7 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
-import { useUserStore } from '../store';
+import { useUserStore } from '../stores';
 const store = useUserStore();
 </script>
 
@@ -26,20 +28,21 @@ const store = useUserStore();
 .Menu {
   display: flex;
   align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  height: 70px;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 100%;
 }
 
 .Menu-Logo {
-  width: 40%;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 5px;
 }
 
 .Menu-Logo h1 {
   font-size: 30px;
+  color: var(--color-accent);
+  text-shadow: 3px 3px 3px #0003;
 }
 
 img {
@@ -54,8 +57,13 @@ a {
   padding: 10px 15px;
   margin: 0 10px;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: 0.25s ease;
   font-family: 'Inter';
+}
+
+a:not(.Menu-Logo):hover {
+  background: var(--color-accent);
+  color: var(--color-blue-main);
 }
 
 .Menu-buttons {
@@ -65,6 +73,6 @@ a {
 }
 
 .auth {
-  background: #bb0000;
+  background: var(--color-secondary);
 }
 </style>

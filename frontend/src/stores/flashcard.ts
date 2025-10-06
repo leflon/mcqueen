@@ -1,79 +1,11 @@
 import { defineStore } from 'pinia';
-import { api } from './lib/api';
-
-// Define types for our state
-export interface User {
-  id: number;
-  username: string;
-}
-
-export interface Flashcard {
-  id: string;
-  question_text: string | null;
-  question_media_id: string | null;
-  answer_text: string | null;
-  answer_media_id: string | null;
-  list_id: string;
-  created_at: number;
-}
-
-export interface FlashcardList {
-  id: string;
-  name: string;
-  parent_id: string | null;
-  created_at: number;
-}
-
-export interface CreateFlashcardData {
-  question_text: string | null;
-  question_media_id: string | null;
-  answer_text: string | null;
-  answer_media_id: string | null;
-}
-
-export interface UpdateFlashcardData {
-  question_text?: string | null;
-  question_media_id?: string | null;
-  answer_text?: string | null;
-  answer_media_id?: string | null;
-}
-
-export const useUserStore = defineStore('user', {
-  state: () => ({
-    user: null as User | null
-  }),
-
-  getters: {
-    currentUser: (state): User | null => state.user
-  },
-
-  actions: {
-    setUser(user: User | null) {
-      this.user = user;
-    },
-
-    clearUser() {
-      this.user = null;
-    },
-
-    async initializeAuth() {
-      try {
-        const response = await api('/auth/me', 'GET');
-        if (response.id && response.username) {
-          this.setUser({
-            id: response.id,
-            username: response.username
-          });
-        } else {
-          this.clearUser();
-        }
-      } catch (error) {
-        console.error('Failed to initialize auth:', error);
-        this.clearUser();
-      }
-    }
-  }
-});
+import { api } from '../lib/api';
+import type {
+  Flashcard,
+  FlashcardList,
+  CreateFlashcardData,
+  UpdateFlashcardData
+} from './types';
 
 export const useFlashcardStore = defineStore('flashcard', {
   state: () => ({
@@ -287,7 +219,6 @@ export const useFlashcardStore = defineStore('flashcard', {
           }
         }
 
-        // Send update to server in background
         await api(`/user-content/flashcard/${id}`, 'PATCH', data);
 
         return true;
@@ -295,7 +226,6 @@ export const useFlashcardStore = defineStore('flashcard', {
         console.error('Failed to update flashcard:', error);
         this.setError('Failed to update flashcard');
 
-        // Revert local changes on error
         await this.fetchFlashcards(listId);
         return false;
       }
@@ -304,10 +234,6 @@ export const useFlashcardStore = defineStore('flashcard', {
     async deleteFlashcard(id: string, listId: string): Promise<boolean> {
       try {
         this.setError(null);
-
-        // Store the flashcard for potential rollback
-        const flashcards = this.flashcards[listId];
-        const flashcardIndex = flashcards?.findIndex((f) => f.id === id);
 
         // Remove from local state immediately
         if (this.flashcards[listId]) {
@@ -359,12 +285,10 @@ export const useFlashcardStore = defineStore('flashcard', {
       }
     },
 
-    // Initialization
     async initialize() {
       await this.fetchLists();
     },
 
-    // Clear all data
     clearAll() {
       this.lists = [];
       this.flashcards = {};

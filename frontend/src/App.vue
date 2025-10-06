@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import MenuBar from './components/MenuBar.vue';
-import { useUserStore } from './store';
+import { useUserStore } from './stores';
 import { onMounted } from 'vue';
 
 // Initialize store on mount.
@@ -10,6 +10,28 @@ onMounted(() => store.initializeAuth());
 </script>
 
 <template>
-  <MenuBar></MenuBar>
-  <RouterView></RouterView>
+  <div class="app-layout">
+    <div class="app-layout__menu">
+      <MenuBar></MenuBar>
+    </div>
+    <div class="app-layout__content">
+      <RouterView></RouterView>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.app-layout__menu {
+  height: 80px;
+}
+.app-layout__content {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+</style>

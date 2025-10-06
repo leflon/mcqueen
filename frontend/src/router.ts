@@ -1,4 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory,
+  type RouteLocationNormalized,
+  type NavigationGuardNext
+} from 'vue-router';
+import { useFlashcardStore } from './stores';
 
 import Home from './views/Home.vue';
 
@@ -9,24 +15,34 @@ const routes = [
     component: Home
   },
   {
-    path: '/flashcards',
-    name: 'CheckFlashcards',
-    component: () => import('./views/Check_flashcards.vue')
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('./views/Dashboard.vue'),
+    beforeEnter: async (
+      to: RouteLocationNormalized,
+      from: RouteLocationNormalized,
+      next: NavigationGuardNext
+    ) => {
+      const flashcardStore = useFlashcardStore();
+      await flashcardStore.initialize();
+
+      const firstListId = flashcardStore.firstAvailableListId;
+      if (firstListId) {
+        next(`/dashboard/${firstListId}`);
+      } else {
+        next();
+      }
+    }
   },
   {
-    path: '/edit_mode/:id',
-    name: 'Edit_mode',
-    component: () => import('./views/Edit_mode.vue')
+    path: '/dashboard/:list_id',
+    name: 'DashboardWithList',
+    component: () => import('./views/Dashboard.vue')
   },
   {
     path: '/practice/:id',
     name: 'Practice',
     component: () => import('./views/Practice.vue')
-  },
-  {
-    path: '/creation_mode',
-    name: 'Creation_mode',
-    component: () => import('./views/Creation_mode.vue')
   },
   {
     path: '/auth',
