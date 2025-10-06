@@ -1,5 +1,4 @@
 <template>
-
   <div class="Menu">
     <RouterLink to="/" class="Menu-Logo">
       <img src="/images/cars-flash-mc-queen-verso.png" alt="Mcqueen" />

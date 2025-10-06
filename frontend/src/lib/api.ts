@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
 
@@ -10,22 +11,22 @@ type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
  * @returns The response data
  */
 export async function api(
-	endpoint: string,
-	method: HttpMethod = 'GET',
-	body?: Record<string, any> | Array<any>
+  endpoint: string,
+  method: HttpMethod = 'GET',
+  body?: Record<string, any> | Array<any>
 ) {
-	const config: RequestInit = {
-		method,
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		credentials: 'include', // Always send cookies
-	};
+  const config: RequestInit = {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include' // Always send cookies
+  };
 
-	if (body && method !== 'GET') {
-		config.body = JSON.stringify(body);
-	}
+  if (body && method !== 'GET') {
+    config.body = JSON.stringify(body);
+  }
 
-	const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-	return response.json();
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  return response.json();
 }

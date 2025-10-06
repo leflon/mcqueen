@@ -16,7 +16,7 @@ db.run(
     username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     created_at INTEGER NOT NULL
-  )`,
+  )`
 );
 
 console.log('== Creating: Container == ');
@@ -32,7 +32,7 @@ db.run(
     parent_id TEXT,
     FOREIGN KEY (owner) REFERENCES User(id) ON DELETE CASCADE,
     FOREIGN KEY (parent_id) REFERENCES Container(id) ON DELETE CASCADE
-  )`,
+  )`
 );
 
 console.log('== Creating: Media == ');
@@ -44,7 +44,7 @@ db.run(
     type TEXT NOT NULL CHECK(type IN ('image', 'video', 'audio')),
     created_at INTEGER NOT NULL,
     FOREIGN KEY (owner) REFERENCES User(id) ON DELETE CASCADE
-  )`,
+  )`
 );
 
 console.log('== Creating: FlashCard ==');
@@ -64,5 +64,5 @@ db.run(
     -- We can have text and/or media in question and reply, but not neither.
     CHECK (question_text IS NOT NULL OR question_media_id IS NOT NULL),
     CHECK (answer_text IS NOT NULL OR answer_media_id IS NOT NULL)
-  )`,
+  )`
 );
