@@ -41,30 +41,15 @@
     <div class="demo-section" id="demo">
       <div class="section-content">
         <div class="demo-visual">
-          <div
-            class="demo-card"
-            :class="{ 'is-flipped': demoFlipped }"
-            @click="flipDemo"
-          >
-            <div class="card-face card-front">
-              <div class="card-header">
-                <h3>Question</h3>
-                <Eye :size="20" class="card-icon" />
-              </div>
-              <div class="card-content">
-                <p>What is the capital of France?</p>
-              </div>
-            </div>
-            <div class="card-face card-back">
-              <div class="card-header">
-                <h3>Answer</h3>
-                <EyeOff :size="20" class="card-icon" />
-              </div>
-              <div class="card-content">
-                <p>Paris</p>
-              </div>
-            </div>
-          </div>
+          <FlipCard
+            :is-flipped="demoFlipped"
+            front-text="What is the capital of France?"
+            back-text="Paris"
+            width="100%"
+            height="250px"
+            :icon-size="20"
+            @flip="flipDemo"
+          />
           <p class="demo-hint">Click the card to flip it!</p>
         </div>
         <div class="demo-text">
@@ -106,7 +91,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Button from '../components/Button.vue';
-import { Eye, EyeOff } from 'lucide-vue-next';
+import FlipCard from '../components/FlipCard.vue';
 
 const router = useRouter();
 const demoFlipped = ref(false);
@@ -252,84 +237,8 @@ function learnMore() {
   gap: var(--spacing-lg);
 }
 
-.demo-card {
-  width: 100%;
+.demo-visual :deep(.flip-card) {
   max-width: 400px;
-  height: 250px;
-  position: relative;
-  cursor: pointer;
-  perspective: 1000px;
-}
-
-.card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-blue-secondary);
-  border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-lg);
-  box-shadow: var(--shadow-lg);
-  backface-visibility: hidden;
-  transition: transform 0.6s ease-in-out;
-  border: 2px solid transparent;
-}
-
-.card-face:hover {
-  border-color: var(--color-accent);
-}
-
-.card-front {
-  transform: rotateY(0deg);
-}
-
-.card-back {
-  transform: rotateY(180deg);
-  background-color: var(--color-blue-main);
-}
-
-.demo-card.is-flipped .card-front {
-  transform: rotateY(-180deg);
-}
-
-.demo-card.is-flipped .card-back {
-  transform: rotateY(0deg);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.card-header h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-white);
-  margin: 0;
-}
-
-.card-icon {
-  color: var(--color-accent);
-}
-
-.card-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.card-content p {
-  font-size: 1.25rem;
-  line-height: 1.6;
-  color: var(--color-white);
-  margin: 0;
 }
 
 .demo-hint {
@@ -549,12 +458,8 @@ function learnMore() {
     font-size: 2rem;
   }
 
-  .demo-card {
+  .demo-visual :deep(.flip-card) {
     height: 200px;
-  }
-
-  .card-content p {
-    font-size: 1.125rem;
   }
 
   .features-grid {
@@ -581,12 +486,8 @@ function learnMore() {
     font-size: 2rem;
   }
 
-  .demo-card {
+  .demo-visual :deep(.flip-card) {
     height: 180px;
-  }
-
-  .card-content p {
-    font-size: 1rem;
   }
 
   .mini-card {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from '../components/Button.vue';
 import IconButton from '../components/IconButton.vue';
+import FlipCard from '../components/FlipCard.vue';
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '../lib/api';
@@ -9,8 +10,6 @@ import {
   RotateCcw,
   ArrowLeft,
   ArrowRight,
-  Eye,
-  EyeOff,
   Home
 } from 'lucide-vue-next';
 
@@ -225,32 +224,15 @@ onMounted(() => {
 
     <!-- Card -->
     <div class="card-container" v-if="currentCard">
-      <div
-        class="flashcard"
-        :class="{ 'is-flipped': isFlipped }"
-        @click="flipCard"
-      >
-        <div class="card-face card-front">
-          <div class="card-header">
-            <h3>Question {{ questionNumber }}</h3>
-            <Eye :size="18" class="card-icon" />
-          </div>
-          <div class="card-content">
-            <p>
-              {{ currentCard.question_text || 'No question text available' }}
-            </p>
-          </div>
-        </div>
-        <div class="card-face card-back">
-          <div class="card-header">
-            <h3>Answer</h3>
-            <EyeOff :size="18" class="card-icon" />
-          </div>
-          <div class="card-content">
-            <p>{{ currentCard.answer_text || 'No answer text available' }}</p>
-          </div>
-        </div>
-      </div>
+      <FlipCard
+        :is-flipped="isFlipped"
+        :front-title="`Question ${questionNumber}`"
+        back-title="Answer"
+        :front-text="currentCard.question_text || 'No question text available'"
+        :back-text="currentCard.answer_text || 'No answer text available'"
+        height="100%"
+        @flip="flipCard"
+      />
     </div>
 
     <!-- Controls -->
@@ -417,85 +399,10 @@ onMounted(() => {
   padding: var(--spacing-sm) 0;
 }
 
-.flashcard {
+.card-container :deep(.flip-card) {
   width: 100%;
   max-width: 700px;
   height: 100%;
-  position: relative;
-  cursor: pointer;
-  perspective: 2000px;
-  overflow: visible;
-}
-
-.card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-blue-secondary);
-  border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-lg);
-  box-shadow: var(--shadow-lg);
-  backface-visibility: hidden;
-  transition: transform 0.3s ease;
-  border: 2px solid transparent;
-}
-
-.card-face:hover {
-  border-color: var(--color-accent);
-}
-
-.card-front {
-  transform: rotateY(0deg);
-}
-
-.card-back {
-  transform: rotateY(180deg);
-  background-color: var(--color-blue-main);
-}
-
-.flashcard.is-flipped .card-front {
-  transform: rotateY(-180deg);
-}
-
-.flashcard.is-flipped .card-back {
-  transform: rotateY(0deg);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.card-header h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-white);
-  margin: 0;
-}
-
-.card-icon {
-  color: var(--color-accent);
-}
-
-.card-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.card-content p {
-  font-size: 1.125rem;
-  line-height: 1.5;
-  color: var(--color-white);
-  margin: 0;
 }
 
 /* Controls */
@@ -568,16 +475,8 @@ onMounted(() => {
     font-size: 1rem;
   }
 
-  .flashcard {
+  .card-container {
     max-height: 220px;
-  }
-
-  .card-face {
-    padding: var(--spacing-md);
-  }
-
-  .card-content p {
-    font-size: 1rem;
   }
 
   .controls-section {
@@ -599,12 +498,8 @@ onMounted(() => {
     font-size: 1.25rem;
   }
 
-  .flashcard {
+  .card-container {
     max-height: 180px;
-  }
-
-  .card-header h3 {
-    font-size: 1rem;
   }
 
   .controls-section {
