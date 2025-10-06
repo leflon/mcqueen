@@ -19,8 +19,8 @@ const routes = [
     name: 'Dashboard',
     component: () => import('./views/Dashboard.vue'),
     beforeEnter: async (
-      to: RouteLocationNormalized,
-      from: RouteLocationNormalized,
+      _to: RouteLocationNormalized,
+      _from: RouteLocationNormalized,
       next: NavigationGuardNext
     ) => {
       const flashcardStore = useFlashcardStore();
