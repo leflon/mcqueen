@@ -7,7 +7,6 @@
     </RouterLink>
     <div class="Menu-buttons">
       <RouterLink to="/flashcards">Your Cards</RouterLink>
-      <RouterLink to="/practice">Practice</RouterLink>
       <RouterLink class="auth" to="/auth">
         <div v-if="store.currentUser">
           {{ store.currentUser.username }} (Sign out)

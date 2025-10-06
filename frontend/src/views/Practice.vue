@@ -1,40 +1,134 @@
+<script setup lang="ts">
+    import McCard from '../components/McCard.vue'
+    import McButton from '../components/McButton.vue'
+
+    import { ref, onMounted } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
+    import { api } from '../lib/api'
+
+    const route = useRoute()
+    const router = useRouter()
+    const id = route.params.id
+
+    const secondsOnCard= ref(0) //Time
+    const questionNumber= ref(1) //Question number
+
+    const isRecto= ref(true)
+
+    function chronometer() : void {
+    setInterval( ()=> { secondsOnCard.value++ }, 1000) 
+    }
+
+    function rectoVerso() : void {
+        isRecto.value= !isRecto.value 
+    }
+
+    function secondsToMMSS(seconds: number) : string {
+    
+    return `${Math.floor(seconds/60)}:${ seconds%60 < 10 ? '0'+seconds%60 : seconds%60}`
+    }
+
+    function resetAction() : void {
+    secondsOnCard.value=0
+    questionNumber.value=1
+    isRecto.value=true
+    }
+
+
+    interface Flashcard {
+    id: string
+    question_text: string | null
+    question_media_id: string | null
+    answer_text: string | null
+    answer_media_id: string | null
+    list_id: string
+    created_at: number
+    }
+
+    const deck = ref<Flashcard[]>([])
+    const list_title = ref("") 
+
+
+
+    async function loadDeckFromBackend() {
+        try {
+            const data = await api(`/user-content/flashcards/${id}`,'GET')
+            deck.value = data["flashcards"]
+        } catch (error) {
+            console.log(error)
+        }  
+    }
+
+    async function get_list_info() {
+    try {
+        const data = await api('/user-content/collections', 'GET')
+        let list_flashcards = data.lists.find((card: any) => card["id"] === id);
+        list_title.value = list_flashcards?.name ?? ""
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+
+    function exit() : void {
+        router.push('/flashcards')
+    }
+    
+    
+    onMounted(()=>{
+        loadDeckFromBackend()
+
+
+        get_list_info()
+    })
+</script>
+
 <template>
+
+  
     <div class="Practice-page">
         <h1>Practice</h1>
         
         <div class="Title-section">
-            <h2>Biology</h2>
+            <h2>{{ list_title }}</h2>
             <div class="Title-buttons">
-                <button>Reset</button>
-                <button>Exit</button>
+                <button @click="resetAction">Reset</button>
+                <button @click='exit'>Exit</button>
+                
             </div>
         </div>
 
         <div class="Stats-section">
             <div class="Stats-item">
-                <p>Time : 69 seconds</p>
+                <p>{{ secondsToMMSS(secondsOnCard) }}</p>
             </div>
             <div class="Stats-item">
-                <p>Questions : 10</p>
+                <p>Question : {{ questionNumber }}</p>
             </div>
         </div>
-
-        <div class="Question-card">
-            <h3>Question : 2</h3>
-            <p>What are the four main types of macromolecules in living organisms?</p>
-        </div>
-
+        
+       
+        
+        <McCard 
+        v-if="deck[questionNumber-1]"
+        :recto='isRecto' 
+        :rectoText='deck[questionNumber-1].question_text' 
+        :versoText='deck[questionNumber-1].answer_text' 
+        :questionNumber='questionNumber'
+        @cardSeen='chronometer' />
+        
+      
         <div class="Control-buttons">
-            <button class="Previous-btn">< Previous question</button>
-            <button class="See-answer-btn">See answer</button>
-            <button class="Next-btn">Next question ></button>
+            <McButton variant='nextQuestion' @click="questionNumber > 1 ? (questionNumber--, isRecto=true) : null">< previous question</McButton>
+            <McButton variant='nextQuestion' @click='rectoVerso' v-if="!isRecto">See Question</McButton>
+
+            <McButton variant='nextQuestion' @click='rectoVerso' v-if="isRecto">See Answer</McButton>
+            <McButton variant='nextQuestion' @click="questionNumber == deck.length ? null : (questionNumber++,isRecto=true)">Next question ></McButton>
         </div>
+
     </div>
 </template>
 
-<script lang="ts">
-
-</script>
 
 <style scoped>
 .Practice-page {

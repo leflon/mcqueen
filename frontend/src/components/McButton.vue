@@ -26,24 +26,27 @@ interface VariantStyle {
 }
 
 
-const props=defineProps<{ 
+const props = withDefaults(defineProps<{
   variant: Variant
-}>()
+}>(), {
+  variant: 'nextQuestion' // valeur par défaut
+})
 
+/*
 const variantStyle=computed<VariantStyle>(() => {
   switch (props.variant) {
     case 'nextQuestion': return {
-      class: { },
+      class: { 'nextQuestion' },
       style: { backgroundColor: color1.value, color:'black', borderRadius: 10 },
       size: {}
     }
     case 'edit': return {
-      class: { },
+      class: { 'edit' },
       style: { backgroundColor: color1.value, color:'black', borderRadius: 10 },
       size: {}
     }
     case 'practice': return {
-      class: { },
+      class: { ' },
       style: { backgroundColor: color1.value, color:'black', borderRadius: 10 },
       size: {}
     }
@@ -63,7 +66,9 @@ const variantStyle=computed<VariantStyle>(() => {
       size: {}
     }
   }
+  return 'Typescript Fallback'
 })
+*/
 
 const textContent = computed<string>(() => {
   switch (props.variant) {
@@ -79,5 +84,83 @@ const textContent = computed<string>(() => {
 </script>
 
 <template>
-  <button :style='variantStyle.style' :class='variantStyle.class'> <slot> {{ textContent }} </slot> </button>
+  <button :class='variant'> <slot> {{ textContent }} </slot> </button>
 </template>
+
+<style scoped>
+
+.nextQuestion {
+    background-color: #e9b796;
+    border: none;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.edit {
+    background-color: #e9b796;
+    border: none;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.practice {
+    background-color: #e9b796;
+    border: none;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.create {
+    background-color: #e9b796;
+    border: none;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.seeAnswer {
+    background-color: #e9b796;
+    border: none;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.addMore {
+    background-color: #e9b796;
+    border: none;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+
+</style>
+

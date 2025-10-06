@@ -25,7 +25,7 @@ const routes = [
         component: Edit_mode
     },
     {
-        path: "/practice",
+        path: "/practice/:id",
         name: "Practice",
         component: Practice
     },
