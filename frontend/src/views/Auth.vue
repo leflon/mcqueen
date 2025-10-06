@@ -49,7 +49,7 @@ const handleSubmit = async (type: 'login' | 'register') => {
   }
   isLoading.value[type] = false;
   store.setUser(response);
-  router.push('/flashcards');
+  router.push('/dashboard');
 };
 
 const handleLogin = async () => handleSubmit('login');
