@@ -2,6 +2,9 @@
 
 ## Great Flash Cards with no ads, for free.
 
+## Base Figma design: [Flashcards on Figma](https://www.figma.com/site/oIu2DDbzXZddwfTMnEmvzA/Flashcards?node-id=0-4&t=vTfeueMjgVzz2fI5-1)
+ 
+
 ### How to use
 
 #### 1. Clone the repository
